@@ -2,7 +2,7 @@ backend:
   name: github
   repo: skiray/NowBlog
   branch: master
-  base_url: https://nowblog.pages.dev/oauth
+  base_url: https://nowblog.pages.dev
   auth_scope: repo
 
 # 本地预览用；静态站无需额外服务
