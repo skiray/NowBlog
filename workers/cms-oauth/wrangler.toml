@@ -1,0 +1,8 @@
+name = "cms-oauth"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+
+# GitHub OAuth App Client ID (safe to keep here). The Secret must be a secret:
+#   wrangler secret put GITHUB_CLIENT_SECRET
+[vars]
+GITHUB_CLIENT_ID = "Ov23liihnxm2WRcF6GCj"

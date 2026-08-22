@@ -1,0 +1,53 @@
+backend:
+  name: github
+  repo: skiray/NowBlog
+  branch: master
+  base_url: https://cms-oauth.hui979214963.workers.dev
+  auth_scope: repo
+
+# 本地预览用；静态站无需额外服务
+publish_mode: simple
+media_folder: public/images
+public_folder: /images
+locale: zh
+
+collections:
+  # 主集合：绝大多数文章只建这里（单中文，无需英文版）
+  - name: blog-zh
+    label: "博客（中文）"
+    label_singular: "中文文章"
+    folder: "src/content/blog/zh"
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    fields:
+      - { name: title, label: "标题", widget: string }
+      - { name: description, label: "摘要", widget: string }
+      - { name: pubDate, label: "发布日期", widget: datetime }
+      - name: tags
+        label: "标签"
+        widget: list
+        field: { name: tag, label: "标签", widget: string }
+      - { name: author, label: "作者", widget: string, default: "Skiray" }
+      - { name: cover, label: "封面图", widget: image, required: false }
+      - { name: draft, label: "草稿", widget: boolean, default: false }
+      - { name: body, label: "正文", widget: markdown }
+
+  # 可选集合：只在你确实要写英文/双语时再用，文件名与中文保持一致即对应
+  - name: blog-en
+    label: "Blog (English)"
+    label_singular: "English post"
+    folder: "src/content/blog/en"
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    fields:
+      - { name: title, label: "Title", widget: string }
+      - { name: description, label: "Summary", widget: string }
+      - { name: pubDate, label: "Publish date", widget: datetime }
+      - name: tags
+        label: "Tags"
+        widget: list
+        field: { name: tag, label: "Tag", widget: string }
+      - { name: author, label: "Author", widget: string, default: "Skiray" }
+      - { name: cover, label: "Cover", widget: image, required: false }
+      - { name: draft, label: "Draft", widget: boolean, default: false }
+      - { name: body, label: "Body", widget: markdown }
