@@ -3,7 +3,7 @@ import sitemap from "@astrojs/sitemap";
 
 // Cloudflare Pages serves at the project root (no subpath).
 export default defineConfig({
-  site: "https://nowblob.pages.dev/",
+  site: "https://nowblog.pages.dev/",
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {
