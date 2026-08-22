@@ -1,9 +1,10 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 
-// Replace with your real domain so RSS/sitemap URLs are correct.
+// Gitee Pages serves at https://skiray.gitee.io/now-blog/ (subpath).
 export default defineConfig({
-  site: "https://example.com",
+  site: "https://skiray.gitee.io/now-blog/",
+  base: "/now-blog/",
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {
