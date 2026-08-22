@@ -1,7 +1,6 @@
 ---
 import { useTranslations } from "../i18n/ui";
 const t = useTranslations(Astro.currentLocale ?? "zh");
-const socials = [{ label: t("about.email"), href: "mailto:666@qq.com" }];
 ---
 
 <section class="section" id="about">
@@ -11,15 +10,6 @@ const socials = [{ label: t("about.email"), href: "mailto:666@qq.com" }];
       <h2>{t("about.title")}</h2>
     </div>
     <div class="bio reveal" set:html={t("about.bio")} />
-    <div class="socials reveal">
-      {
-        socials.map((s) => (
-          <a class="social" href={s.href} target="_blank" rel="me">
-            {s.label}
-          </a>
-        ))
-      }
-    </div>
   </div>
 </section>
 
@@ -62,30 +52,5 @@ const socials = [{ label: t("about.email"), href: "mailto:666@qq.com" }];
     color: var(--text);
     font-weight: 600;
     line-height: 1.8;
-  }
-  .socials {
-    display: flex;
-    gap: 24px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 36px;
-  }
-  .social {
-    color: var(--text);
-    font-weight: 600;
-    font-size: 1.05rem;
-    padding: 14px 30px;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
-  }
-  .social:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--ghost-bg);
-  }
-  .social:hover {
-    border-color: var(--accent);
-    color: var(--accent);
   }
 </style>
