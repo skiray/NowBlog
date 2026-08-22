@@ -1,3 +1,5 @@
+const CLIENT_ID = "Ov23liuBf0DK6It6qYJ9";
+
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
   const base = `${url.protocol}//${url.host}`;
@@ -11,7 +13,7 @@ export async function onRequestGet({ request, env }) {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({
-      client_id: env.CLIENT_ID,
+      client_id: CLIENT_ID,
       client_secret: env.CLIENT_SECRET,
       code,
     }),
