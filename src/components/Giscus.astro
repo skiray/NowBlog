@@ -1,11 +1,12 @@
 ---
 // Configure these with your GitHub repo (see https://giscus.app).
+const locale = Astro.currentLocale ?? "zh";
 const GISCUS = {
-  repo: "your-username/your-repo",
-  repoId: "YOUR_REPO_ID",
-  category: "Announcements",
-  categoryId: "YOUR_CATEGORY_ID",
-  lang: "en",
+  repo: "skiray/NowBlog",
+  repoId: "R_kgDOUAum4A",
+  category: "General",
+  categoryId: "DIC_kwDOUAum4M4DD9S3",
+  lang: locale === "en" ? "en" : "zh",
 };
 const enabled = !GISCUS.repo.includes("your-");
 ---
