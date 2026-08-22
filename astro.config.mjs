@@ -1,10 +1,10 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 
-// Gitee Pages serves at https://skiray.gitee.io/now-blog/ (subpath).
+// Cloudflare Pages serves at the project root (no subpath).
+// Replace `now-blog` below with your real *.pages.dev project name if different.
 export default defineConfig({
-  site: "https://skiray.gitee.io/now-blog/",
-  base: "/now-blog/",
+  site: "https://now-blog.pages.dev/",
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {
