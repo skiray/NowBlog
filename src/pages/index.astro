@@ -1,0 +1,42 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Hero from "../components/Hero.astro";
+import LatestPosts from "../components/LatestPosts.astro";
+import TagCloud from "../components/TagCloud.astro";
+import About from "../components/About.astro";
+import Footer from "../components/Footer.astro";
+import { useTranslations } from "../i18n/ui";
+
+const t = useTranslations(Astro.currentLocale ?? "zh");
+---
+
+<Layout>
+  <Navbar />
+  <main>
+    <Hero />
+    <LatestPosts />
+    <section class="section" id="topics">
+      <div class="container">
+        <div class="head reveal">
+          <span class="eyebrow">{t("topics.eyebrow")}</span>
+          <h2>{t("topics.title")}</h2>
+        </div>
+        <TagCloud />
+      </div>
+    </section>
+    <About />
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .head {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .head h2 {
+    font-size: clamp(1.9rem, 4vw, 2.7rem);
+    margin-top: 12px;
+  }
+</style>

@@ -1,0 +1,42 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import TagCloud from "../../components/TagCloud.astro";
+import { useTranslations } from "../../i18n/ui";
+
+const t = useTranslations(Astro.currentLocale ?? "zh");
+---
+
+<Layout title={t("tags.title")} description={t("tags.sub")}>
+  <Navbar />
+  <main class="section">
+    <div class="container narrow">
+      <div class="head reveal">
+        <span class="eyebrow">{t("topics.eyebrow")}</span>
+        <h1>{t("tags.title")}</h1>
+        <p class="sub">{t("tags.sub")}</p>
+      </div>
+      <TagCloud />
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .container.narrow {
+    max-width: 760px;
+  }
+  .head {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-top: 12px;
+  }
+  .sub {
+    color: var(--text-dim);
+    margin-top: 10px;
+  }
+</style>

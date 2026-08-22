@@ -1,0 +1,77 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import { useTranslations } from "../i18n/ui";
+
+const t = useTranslations(Astro.currentLocale ?? "zh");
+---
+
+<Layout title={t("search.title")} description={t("search.sub")}>
+  <link slot="head" rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <Navbar />
+  <main class="section">
+    <div class="container narrow">
+      <span class="eyebrow">{t("search.title")}</span>
+      <h1 class="reveal">{t("search.title")}</h1>
+      <p class="sub reveal">{t("search.sub")}</p>
+      <div id="search" class="reveal"></div>
+      <p id="search-fallback" class="fallback">
+        {t("search.fallback")}
+      </p>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  function loadSearch() {
+    const el = document.getElementById("search");
+    if (!el) return;
+    const fb = document.getElementById("search-fallback");
+    const s = document.createElement("script");
+    s.src = "/pagefind/pagefind-ui.js";
+    s.onload = () => {
+      // @ts-ignore
+      new PagefindUI({
+        element: "#search",
+        showSubResults: true,
+        basePath: "/pagefind/",
+      });
+      if (fb) fb.style.display = "none";
+    };
+    s.onerror = () => {
+      /* index not built yet — fallback stays visible */
+    };
+    document.body.appendChild(s);
+  }
+  loadSearch();
+</script>
+
+<style>
+  .container.narrow {
+    max-width: 760px;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 12px 0 8px;
+  }
+  .sub {
+    color: var(--text-dim);
+    margin-bottom: 32px;
+  }
+  .fallback {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin-top: 18px;
+  }
+  .fallback code {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  #search {
+    min-height: 60px;
+  }
+</style>

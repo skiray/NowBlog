@@ -1,0 +1,92 @@
+---
+import { slugOf, type Post } from "../i18n/content";
+import { useTranslations } from "../i18n/ui";
+
+interface Props {
+  post: Post;
+  locale: "zh" | "en";
+  base: string;
+  index?: number;
+}
+const { post, locale, base, index = 0 } = Astro.props;
+const t = useTranslations(locale);
+const fmt = post.data.pubDate.toLocaleDateString(
+  locale === "en" ? "en-US" : "zh-CN",
+  { year: "numeric", month: "short", day: "numeric" }
+);
+---
+
+<div class="post-wrap reveal" style={`--i:${index}`}>
+   <a class="post" href={`${base}${slugOf(post)}/`}>
+     {
+       post.data.cover && (
+         <img class="cover" src={post.data.cover} alt={post.data.title} />
+       )
+     }
+     <div class="meta">
+      <time datetime={post.data.pubDate.toISOString()}>{fmt}</time>
+      <span>·</span>
+      <span>{post.data.author}</span>
+    </div>
+    <h2>{post.data.title}</h2>
+    <p>{post.data.description}</p>
+    <div class="tags">
+      {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+    </div>
+  </a>
+</div>
+
+<style>
+  .post-wrap {
+    display: contents;
+  }
+  .post {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 26px 28px;
+    transition: transform 0.15s ease, border-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .cover {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: calc(var(--radius) - 6px);
+    margin-bottom: 16px;
+  }
+  .post:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow: 0 20px 40px -22px rgba(109, 139, 255, 0.5);
+  }
+  .meta {
+    display: flex;
+    gap: 8px;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+  }
+  .post h2 {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+  }
+  .post p {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    margin-bottom: 14px;
+  }
+  .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 0.75rem;
+    color: var(--accent);
+    background: rgba(109, 139, 255, 0.12);
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+</style>

@@ -1,0 +1,105 @@
+---
+import LangSwitch from "./LangSwitch.astro";
+import { useTranslations } from "../i18n/ui";
+const t = useTranslations(Astro.currentLocale ?? "zh");
+const base = Astro.currentLocale === "en" ? "/en" : "";
+const links = [
+  { href: "/blog/", key: "nav.blog" },
+  { href: "/tags/", key: "nav.tags" },
+  { href: "/blog/archive/", key: "blog.archive" },
+  { href: "/search/", key: "nav.search" },
+  { href: `${base}/#about`, key: "nav.about" },
+];
+---
+
+<header class="nav">
+  <div class="container nav-inner">
+      <a class="brand" href="/">
+        <span class="dot"></span> {t("brand")}
+      </a>
+    <nav class="nav-links">
+      {links.map((l) => <a href={l.href}>{t(l.key)}</a>)}
+    </nav>
+    <div class="actions">
+      <button
+        id="theme-toggle"
+        class="btn btn-ghost theme-toggle"
+        type="button"
+        aria-label={t("theme.toogle")}
+      ></button>
+      <LangSwitch />
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById("theme-toggle");
+  const setIcon = () => {
+    btn.textContent =
+      document.documentElement.dataset.theme === "light" ? "🌙" : "☀️";
+  };
+  btn?.addEventListener("click", () => {
+    const next =
+      document.documentElement.dataset.theme === "light" ? "dark" : "light";
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem("theme", next);
+    document.dispatchEvent(new CustomEvent("theme-change", { detail: next }));
+    setIcon();
+  });
+  setIcon();
+</script>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .brand {
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    color: var(--text-dim);
+    font-size: 0.92rem;
+  }
+  .nav-links a:hover {
+    color: var(--text);
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .theme-toggle {
+    padding: 13px;
+    min-width: 46px;
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+  @media (max-width: 720px) {
+    .nav-links {
+      display: none;
+    }
+  }
+</style>

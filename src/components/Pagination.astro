@@ -1,0 +1,119 @@
+---
+interface Props {
+  currentPage: number;
+  lastPage: number;
+  rootHref: string; // page 1, e.g. "/blog"
+  pageBase: string; // pages 2..n prefix, e.g. "/blog/page"
+}
+const { currentPage, lastPage, rootHref, pageBase } = Astro.props;
+
+const href = (n: number) => (n === 1 ? rootHref : `${pageBase}/${n}`);
+
+const pages: number[] = [];
+const seen = new Set<number>();
+const push = (n: number) => {
+  if (n >= 1 && n <= lastPage && !seen.has(n)) {
+    seen.add(n);
+    pages.push(n);
+  }
+};
+push(1);
+push(currentPage - 1);
+push(currentPage);
+push(currentPage + 1);
+push(lastPage);
+pages.sort((a, b) => a - b);
+
+const items: ({ type: "page"; n: number } | { type: "gap" })[] = [];
+let prev = 0;
+for (const n of pages) {
+  if (n - prev > 1) items.push({ type: "gap" });
+  items.push({ type: "page", n });
+  prev = n;
+}
+---
+
+{
+  lastPage > 1 && (
+    <nav class="pager" aria-label="Pagination">
+      {currentPage > 1 ? (
+        <a class="pg" href={href(currentPage - 1)} aria-label="Previous page">
+          ←
+        </a>
+      ) : (
+        <span class="pg disabled" aria-hidden="true">
+          ←
+        </span>
+      )}
+
+      {items.map((it) =>
+        it.type === "gap" ? (
+          <span class="gap" aria-hidden="true">
+            …
+          </span>
+        ) : (
+          <a
+            class={`pg ${it.n === currentPage ? "active" : ""}`}
+            href={href(it.n)}
+            aria-current={it.n === currentPage ? "page" : undefined}
+          >
+            {it.n}
+          </a>
+        )
+      )}
+
+      {currentPage < lastPage ? (
+        <a class="pg" href={href(currentPage + 1)} aria-label="Next page">
+          →
+        </a>
+      ) : (
+        <span class="pg disabled" aria-hidden="true">
+          →
+        </span>
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .pager {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 44px;
+    flex-wrap: wrap;
+  }
+  .pg {
+    display: grid;
+    place-items: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  a.pg:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .pg.active {
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-color: transparent;
+  }
+  .pg.disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+  .gap {
+    color: var(--text-dim);
+    padding: 0 4px;
+  }
+</style>

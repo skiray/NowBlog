@@ -1,0 +1,51 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+
+const locale = "en" as const;
+const home = "/en/";
+const blog = "/en/blog/";
+---
+
+<Layout title="404 — Page not found">
+  <Navbar />
+  <main class="section">
+    <div class="container narrow center">
+      <span class="eyebrow">404</span>
+      <h1 class="reveal">Page not found</h1>
+      <p class="sub reveal">
+        The page you're looking for doesn't exist or has moved.
+      </p>
+      <div class="actions reveal">
+        <a class="btn btn-primary" href={home}>Back home</a>
+        <a class="btn btn-ghost" href={blog}>View blog</a>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .container.narrow {
+    max-width: 640px;
+  }
+  .center {
+    text-align: center;
+    padding: 80px 0;
+  }
+  h1 {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    margin: 12px 0;
+  }
+  .sub {
+    color: var(--text-dim);
+    margin-bottom: 32px;
+  }
+  .actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+import { languages } from "../i18n/ui";
+
+const current = Astro.currentLocale ?? "zh";
+const path = Astro.url.pathname;
+
+function switchTo(target: string): string {
+  const hasEn = path.startsWith("/en");
+  if (target === "en") return hasEn ? path : "/en" + path;
+  return hasEn ? path.slice(3) || "/" : path;
+}
+---
+
+<div class="lang">
+  {
+    Object.entries(languages).map(([l, label]) => (
+      <a
+        href={switchTo(l)}
+        hreflang={l}
+        class={l === current ? "active" : ""}
+        aria-current={l === current ? "true" : undefined}
+      >
+        {label}
+      </a>
+    ))
+  }
+</div>
+
+<style>
+  .lang {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px;
+    background: var(--ghost-bg);
+  }
+  .lang a {
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    color: var(--text-dim);
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .lang a:hover {
+    color: var(--text);
+  }
+  .lang a.active {
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+</style>

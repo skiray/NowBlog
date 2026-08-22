@@ -1,0 +1,55 @@
+---
+import { getPosts } from "../i18n/content";
+
+const locale = (Astro.currentLocale ?? "zh") as "zh" | "en";
+const posts = await getPosts(locale);
+const base = locale === "en" ? "/en/tags/" : "/tags/";
+const counts: Record<string, number> = {};
+posts.forEach((p) =>
+  p.data.tags.forEach((t) => {
+    counts[t] = (counts[t] ?? 0) + 1;
+  })
+);
+const tags = Object.entries(counts)
+  .sort((a, b) => b[1] - a[1])
+  .map(([t, c]) => ({ t, c }));
+---
+
+<div class="cloud reveal">
+  {
+    tags.map(({ t, c }) => (
+      <a class="tag" href={`${base}${encodeURIComponent(t)}/`}>
+        {t}
+        <sup>{c}</sup>
+      </a>
+    ))
+  }
+</div>
+
+<style>
+  .cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .tag {
+    font-size: 0.92rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 999px;
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  .tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .tag sup {
+    color: var(--text-dim);
+    font-size: 0.7em;
+    margin-left: 4px;
+  }
+</style>

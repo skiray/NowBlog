@@ -1,0 +1,59 @@
+---
+import { useTranslations } from "../i18n/ui";
+const year = new Date().getFullYear();
+const t = useTranslations(Astro.currentLocale ?? "zh");
+---
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <a class="brand" href="/"><span class="dot"></span> {t("brand")}</a>
+    <p class="copy">© {year} {t("brand")} · {t("footer.rights")}</p>
+    <nav class="foot-links">
+      <a href="/rss.xml">RSS</a>
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: 48px 0;
+  }
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+  .brand {
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+  .foot-links {
+    display: flex;
+    gap: 20px;
+  }
+  .foot-links a:hover {
+    color: var(--text);
+  }
+  @media (max-width: 600px) {
+    .footer-inner {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>

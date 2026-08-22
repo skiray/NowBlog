@@ -1,0 +1,90 @@
+---
+// Configure these with your GitHub repo (see https://giscus.app).
+const GISCUS = {
+  repo: "your-username/your-repo",
+  repoId: "YOUR_REPO_ID",
+  category: "Announcements",
+  categoryId: "YOUR_CATEGORY_ID",
+  lang: "en",
+};
+const enabled = !GISCUS.repo.includes("your-");
+---
+
+{
+  enabled && (
+    <div
+      class="giscus"
+      data-repo={GISCUS.repo}
+      data-repo-id={GISCUS.repoId}
+      data-category={GISCUS.category}
+      data-category-id={GISCUS.categoryId}
+      data-lang={GISCUS.lang}
+    />
+  )
+}
+
+{
+  !enabled && (
+    <p class="giscus-hint">
+      Comments are disabled. Add your GitHub repo details in{" "}
+      <code>src/components/Giscus.astro</code> to enable Giscus.
+    </p>
+  )
+}
+
+{enabled && (
+  <script is:inline>
+    (function () {
+      const el = document.querySelector(".giscus");
+      if (!el) return;
+      const theme =
+        document.documentElement.dataset.theme === "light" ? "light" : "dark";
+      const s = document.createElement("script");
+      s.src = "https://giscus.app/client.js";
+      s.async = true;
+      s.crossOrigin = "anonymous";
+      s.setAttribute("data-repo", el.dataset.repo);
+      s.setAttribute("data-repo-id", el.dataset.repoId);
+      s.setAttribute("data-category", el.dataset.category);
+      s.setAttribute("data-category-id", el.dataset.categoryId);
+      s.setAttribute("data-mapping", "pathname");
+      s.setAttribute("data-strict", "0");
+      s.setAttribute("data-reactions-enabled", "1");
+      s.setAttribute("data-emit-metadata", "0");
+      s.setAttribute("data-input-position", "bottom");
+      s.setAttribute("data-theme", theme);
+      s.setAttribute("data-lang", el.dataset.lang || "en");
+      el.appendChild(s);
+
+      document.addEventListener("theme-change", (e) => {
+        const t = e.detail === "light" ? "light" : "dark";
+        const iframe = document.querySelector("iframe.giscus-frame");
+        if (iframe)
+          iframe.contentWindow.postMessage(
+            { giscus: { setConfig: { theme: t } } },
+            "https://giscus.app"
+          );
+      });
+    })();
+  </script>
+)}
+
+<style>
+  .giscus {
+    margin-top: 40px;
+  }
+  .giscus-hint {
+    margin-top: 40px;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    padding: 16px 18px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+  }
+  .giscus-hint code {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+</style>

@@ -1,0 +1,522 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import Giscus from "../components/Giscus.astro";
+import PostCard from "../components/PostCard.astro";
+import { render } from "astro:content";
+import { useTranslations } from "../i18n/ui";
+import {
+  type Post,
+  tagHref,
+  blogHref,
+  slugOf,
+  getAdjacent,
+  getRelated,
+  readingMinutes,
+} from "../i18n/content";
+
+interface Props {
+  post: Post;
+  locale: "zh" | "en";
+}
+const { post, locale } = Astro.props;
+const t = useTranslations(locale);
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+const { newer, older } = await getAdjacent(locale, post);
+const related = await getRelated(locale, post);
+const fmt = post.data.pubDate.toLocaleDateString(
+  locale === "en" ? "en-US" : "zh-CN",
+  { year: "numeric", month: "long", day: "numeric" }
+);
+---
+
+<Layout
+  title={`${post.data.title} — ${locale === "en" ? "NowBlog" : "今时录"}`}
+  description={post.data.description}
+  indexable
+>
+   <Navbar />
+   <div class="progress" aria-hidden="true"></div>
+   <button id="to-top" class="to-top" type="button" aria-label="Back to top">
+     ↑
+   </button>
+   <main class="section">
+     <div class="container narrow">
+       {
+         post.data.cover && (
+           <img class="cover" src={post.data.cover} alt={post.data.title} />
+         )
+       }
+       <div class="reveal">
+         <a class="back" href={blogHref(locale)}>{t("blog.back")}</a>
+         <div class="meta">
+           <time datetime={post.data.pubDate.toISOString()}>{fmt}</time>
+           <span>·</span>
+           <span data-pagefind-meta="author">{post.data.author}</span>
+           <span>·</span>
+           <span>{readingMinutes(post)} {t("post.read")}</span>
+         </div>
+         <h1 data-pagefind-meta="title">{post.data.title}</h1>
+         <p class="lead" data-pagefind-meta="description">{post.data.description}</p>
+         <div class="tags">
+           {
+             post.data.tags.map((tag) => (
+               <a class="tag" href={tagHref(locale, tag)} data-pagefind-filter="tag">
+                 {tag}
+               </a>
+             ))
+           }
+         </div>
+       </div>
+
+       {
+         toc.length > 0 && (
+           <nav class="toc" aria-label={t("post.toc")}>
+             <p class="toc-title">{t("post.toc")}</p>
+             <ul>
+               {toc.map((h) => (
+                 <li class={`lvl-${h.depth}`}>
+                   <a href={`#${h.slug}`}>{h.text}</a>
+                 </li>
+               ))}
+             </ul>
+           </nav>
+         )
+       }
+
+       <hr />
+       <div class="prose" data-pagefind-body data-pagefind-highlight>
+         <Content />
+       </div>
+
+       <nav class="pager">
+         {
+           older && (
+             <a class="pager-link" href={`${blogHref(locale)}${slugOf(older)}/`}>
+               <span>{t("post.prev")}</span>
+               <strong>{older.data.title}</strong>
+             </a>
+           )
+         }
+         {
+           newer && (
+             <a
+               class="pager-link next"
+               href={`${blogHref(locale)}${slugOf(newer)}/`}
+             >
+               <span>{t("post.next")}</span>
+               <strong>{newer.data.title}</strong>
+             </a>
+           )
+         }
+       </nav>
+
+       <Giscus />
+
+       {
+         related.length > 0 && (
+           <section class="related">
+             <h2>{t("post.related")}</h2>
+             <div class="list">
+               {related.map((p, i) => (
+                 <PostCard post={p} locale={locale} base={blogHref(locale)} index={i} />
+               ))}
+             </div>
+           </section>
+         )
+       }
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .container.narrow {
+    max-width: 720px;
+  }
+  .cover {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+  .back {
+    display: inline-block;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+  .back:hover {
+    color: var(--text);
+  }
+  .meta {
+    display: flex;
+    gap: 8px;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    margin-bottom: 12px;
+  }
+  .lead {
+    color: var(--text-dim);
+    font-size: 1.15rem;
+    margin-bottom: 16px;
+  }
+  .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 0.75rem;
+    color: var(--accent);
+    background: rgba(109, 139, 255, 0.12);
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+  .progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 60;
+    transform-origin: 0 50%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transform: scaleX(0);
+    animation: progress-grow linear both;
+    animation-timeline: scroll(root block);
+  }
+  @keyframes progress-grow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+  .toc {
+    margin: 24px 0;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+  .toc-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+  .toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .toc .lvl-3 {
+    padding-left: 16px;
+  }
+  .toc a {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+  .toc a:hover,
+  .toc a.active {
+    color: var(--accent);
+  }
+  .prose :global(h2) {
+    font-size: 1.5rem;
+    margin: 32px 0 12px;
+    scroll-margin-top: 84px;
+    position: relative;
+  }
+  .prose :global(h3) {
+    font-size: 1.2rem;
+    margin: 24px 0 10px;
+    scroll-margin-top: 84px;
+    position: relative;
+  }
+  .prose :global(.anchor) {
+    position: absolute;
+    left: -1.1em;
+    opacity: 0;
+    color: var(--accent);
+    font-weight: 400;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+  .prose :global(h2):hover .anchor,
+  .prose :global(h3):hover .anchor {
+    opacity: 1;
+  }
+  .to-top {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, border-color 0.15s ease;
+    z-index: 55;
+    box-shadow: var(--shadow);
+  }
+  .to-top.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+  .to-top:hover {
+    border-color: var(--accent);
+  }
+  @media (max-width: 720px) {
+    .prose :global(.anchor) {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .to-top {
+      transition: none;
+    }
+  }
+  .prose :global(p) {
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+  .prose :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    color: var(--text-dim);
+    padding-left: 22px;
+    margin-bottom: 16px;
+    display: grid;
+    gap: 8px;
+  }
+  .prose :global(code) {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 0.88em;
+  }
+  .prose :global(pre) {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow-x: auto;
+    margin-bottom: 16px;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--ghost-bg);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .copy-btn:hover {
+    color: var(--text);
+    border-color: var(--accent);
+  }
+  .prose :global(pre code) {
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  .prose :global(blockquote) {
+    border-left: 3px solid var(--accent);
+    padding-left: 16px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+  .prose :global(img) {
+    cursor: zoom-in;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.82);
+    opacity: 0;
+    pointer-events: none;
+    cursor: zoom-out;
+    transition: opacity 0.2s ease;
+  }
+  .lightbox.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: var(--radius);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox {
+      transition: none;
+    }
+  }
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 36px;
+  }
+  .pager-link {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .pager-link:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .pager-link.next {
+    text-align: right;
+  }
+  .pager-link span {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .pager-link strong {
+    font-size: 0.98rem;
+    font-weight: 600;
+  }
+  .related {
+    margin-top: 48px;
+  }
+  .related h2 {
+    font-size: 1.3rem;
+    margin-bottom: 18px;
+  }
+  .related .list {
+    display: grid;
+    gap: 20px;
+  }
+  @media (max-width: 560px) {
+    .pager {
+      grid-template-columns: 1fr;
+    }
+    .pager-link.next {
+      text-align: left;
+    }
+  }
+</style>
+
+<script>
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".toc a"));
+  const byId = new Map(links.map((a) => [a.hash.slice(1), a]));
+  const headings = document.querySelectorAll<HTMLElement>(".prose :is(h2, h3)");
+  if (headings.length && links.length) {
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            links.forEach((l) => l.classList.remove("active"));
+            byId.get(e.target.id)?.classList.add("active");
+          }
+        }
+      },
+      { rootMargin: "0px 0px -70% 0px" }
+    );
+    headings.forEach((h) => h.id && obs.observe(h));
+  }
+
+  headings.forEach((h) => {
+    if (!h.id) return;
+    const a = document.createElement("a");
+    a.className = "anchor";
+    a.href = `#${h.id}`;
+    a.setAttribute("aria-label", "Link to section");
+    a.textContent = "#";
+    a.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const url = `${location.pathname}#${h.id}`;
+      history.replaceState(null, "", url);
+      await navigator.clipboard.writeText(location.origin + url);
+      a.textContent = "✓";
+      setTimeout(() => (a.textContent = "#"), 1200);
+    });
+    h.appendChild(a);
+  });
+
+  const toTop = document.getElementById("to-top");
+  if (toTop) {
+    const onScroll = () =>
+      toTop.classList.toggle("show", window.scrollY > 600);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    toTop.addEventListener("click", () =>
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    );
+  }
+
+  document.querySelectorAll<HTMLPreElement>(".prose pre").forEach((pre) => {
+    const btn = document.createElement("button");
+    btn.className = "copy-btn";
+    btn.type = "button";
+    btn.textContent = "Copy";
+    btn.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(pre.textContent ?? "");
+      btn.textContent = "Copied";
+      setTimeout(() => (btn.textContent = "Copy"), 1500);
+    });
+    pre.appendChild(btn);
+  });
+
+  const overlay = document.createElement("div");
+  overlay.className = "lightbox";
+  const lbImg = document.createElement("img");
+  lbImg.alt = "";
+  overlay.appendChild(lbImg);
+  document.body.appendChild(overlay);
+  overlay.addEventListener("click", () => overlay.classList.remove("show"));
+  document
+    .querySelectorAll<HTMLImageElement>(".prose img")
+    .forEach((img) => {
+      img.addEventListener("click", () => {
+        lbImg.src = img.currentSrc || img.src;
+        overlay.classList.add("show");
+      });
+    });
+</script>

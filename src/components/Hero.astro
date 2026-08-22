@@ -1,0 +1,154 @@
+---
+// Personalize these values for your own site.
+import { useTranslations } from "../i18n/ui";
+const t = useTranslations(Astro.currentLocale ?? "zh");
+const name = t("brand");
+const initials = Astro.currentLocale === "en" ? "N" : "今";
+---
+
+<section class="hero">
+  <div class="aurora" aria-hidden="true">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+  </div>
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <div class="avatar reveal">{initials}</div>
+    <h1 class="reveal">
+      {t("hero.greeting")} <span class="gradient-text">{name}</span>
+    </h1>
+    <p class="lead reveal">
+      {t("hero.lead")}
+    </p>
+    <div class="actions reveal">
+      <a class="btn btn-primary" href="/blog/">{t("hero.read")}</a>
+      <a class="btn btn-ghost" href="#about">{t("hero.about")}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding: 140px 0 110px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .aurora {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    filter: blur(60px);
+    opacity: 0.55;
+  }
+  .blob {
+    position: absolute;
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    mix-blend-mode: screen;
+    animation: float 14s ease-in-out infinite;
+  }
+  .b1 {
+    background: radial-gradient(circle, var(--accent), transparent 65%);
+    top: -160px;
+    left: 8%;
+  }
+  .b2 {
+    background: radial-gradient(circle, var(--accent-2), transparent 65%);
+    top: -100px;
+    right: 6%;
+    animation-delay: -4s;
+  }
+  .b3 {
+    background: radial-gradient(circle, var(--accent-3), transparent 65%);
+    top: 40px;
+    left: 45%;
+    animation-delay: -8s;
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+    33% {
+      transform: translate(40px, 30px) scale(1.1);
+    }
+    66% {
+      transform: translate(-30px, 20px) scale(0.95);
+    }
+  }
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+        var(--grid-line) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(
+      ellipse 70% 60% at 50% 0%,
+      #000 30%,
+      transparent 75%
+    );
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative;
+  }
+  .avatar {
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 26px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 16px 40px -16px rgba(109, 139, 255, 0.7);
+  }
+  h1 {
+    font-size: clamp(2.6rem, 6.5vw, 4.2rem);
+    margin: 0 0 22px;
+  }
+  .lead {
+    color: transparent;
+    background: linear-gradient(120deg, var(--accent-3), var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 1.7rem;
+    max-width: 640px;
+    margin: 0 auto 36px;
+    font-family: "Tangerine", "Noto Serif SC", serif;
+    letter-spacing: 0.04em;
+  }
+  .actions {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .socials {
+    display: flex;
+    gap: 22px;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+  .social {
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  .social:hover {
+    color: var(--text);
+  }
+</style>
