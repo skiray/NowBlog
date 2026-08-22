@@ -2,9 +2,8 @@ import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 
 // Cloudflare Pages serves at the project root (no subpath).
-// Replace `now-blog` below with your real *.pages.dev project name if different.
 export default defineConfig({
-  site: "https://now-blog.pages.dev/",
+  site: "https://nowblob.pages.dev/",
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {

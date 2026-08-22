@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Replace with your real domain to match astro.config.mjs `site`
-Sitemap: https://now-blog.pages.dev/sitemap-index.xml
+Sitemap: https://nowblob.pages.dev/sitemap-index.xml
