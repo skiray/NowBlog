@@ -4,6 +4,8 @@ import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import Giscus from "../components/Giscus.astro";
 import PostCard from "../components/PostCard.astro";
+import AuthorCard from "../components/AuthorCard.astro";
+import LatestList from "../components/LatestList.astro";
 import { render } from "astro:content";
 import { useTranslations } from "../i18n/ui";
 import {
@@ -43,98 +45,179 @@ const fmt = post.data.pubDate.toLocaleDateString(
      ↑
    </button>
    <main class="section">
-     <div class="container narrow">
-       {
-         post.data.cover && (
-           <img class="cover" src={post.data.cover} alt={post.data.title} />
-         )
-       }
-       <div class="reveal">
-         <a class="back" href={blogHref(locale)}>{t("blog.back")}</a>
-         <div class="meta">
-           <time datetime={post.data.pubDate.toISOString()}>{fmt}</time>
-           <span>·</span>
-           <span data-pagefind-meta="author">{post.data.author}</span>
-           <span>·</span>
-           <span>{readingMinutes(post)} {t("post.read")}</span>
+     <div class="container post-layout">
+       <aside class="rail left">
+         <div class="info">
+           <h2 class="info-title">{t("post.info")}</h2>
+           <div class="info-row">
+             <span>{t("post.published")}</span>
+             <time datetime={post.data.pubDate.toISOString()}>{fmt}</time>
+           </div>
+           <div class="info-row">
+             <span>{t("post.author")}</span>
+             <span data-pagefind-meta="author">{post.data.author}</span>
+           </div>
+           <div class="info-row">
+             <span>{t("post.reading")}</span>
+             <span>{readingMinutes(post)} {t("post.read")}</span>
+           </div>
          </div>
-         <h1 data-pagefind-meta="title">{post.data.title}</h1>
-         <p class="lead" data-pagefind-meta="description">{post.data.description}</p>
-         <div class="tags">
+         {
+           toc.length > 0 && (
+             <nav class="toc" aria-label={t("post.toc")}>
+               <p class="toc-title">{t("post.toc")}</p>
+               <ul>
+                 {toc.map((h) => (
+                   <li class={`lvl-${h.depth}`}>
+                     <a href={`#${h.slug}`}>{h.text}</a>
+                   </li>
+                 ))}
+               </ul>
+             </nav>
+           )
+         }
+       </aside>
+
+       <article class="post-main">
+         {
+           post.data.cover && (
+             <img class="cover" src={post.data.cover} alt={post.data.title} />
+           )
+         }
+         <div class="reveal">
+           <a class="back" href={blogHref(locale)}>{t("blog.back")}</a>
+           <h1 data-pagefind-meta="title">{post.data.title}</h1>
+           <p class="lead" data-pagefind-meta="description">{post.data.description}</p>
+           <div class="tags">
+             {
+               post.data.tags.map((tag) => (
+                 <a class="tag" href={tagHref(locale, tag)} data-pagefind-filter="tag">
+                   {tag}
+                 </a>
+               ))
+             }
+           </div>
+         </div>
+
+         <hr />
+         <div class="prose" data-pagefind-body data-pagefind-highlight>
+           <Content />
+         </div>
+
+         <nav class="pager">
            {
-             post.data.tags.map((tag) => (
-               <a class="tag" href={tagHref(locale, tag)} data-pagefind-filter="tag">
-                 {tag}
+             older && (
+               <a class="pager-link" href={`${blogHref(locale)}${slugOf(older)}/`}>
+                 <span>{t("post.prev")}</span>
+                 <strong>{older.data.title}</strong>
                </a>
-             ))
+             )
            }
+           {
+             newer && (
+               <a
+                 class="pager-link next"
+                 href={`${blogHref(locale)}${slugOf(newer)}/`}
+               >
+                 <span>{t("post.next")}</span>
+                 <strong>{newer.data.title}</strong>
+               </a>
+             )
+           }
+         </nav>
+
+         <Giscus />
+
+         {
+           related.length > 0 && (
+             <section class="related">
+               <h2>{t("post.related")}</h2>
+               <div class="list">
+                 {related.map((p, i) => (
+                   <PostCard post={p} locale={locale} base={blogHref(locale)} index={i} />
+                 ))}
+               </div>
+             </section>
+           )
+         }
+       </article>
+
+       <aside class="rail right">
+         <AuthorCard />
+         <div class="widget">
+           <h3 class="widget-title">{t("sidebar.tags")}</h3>
+           <div class="tags">
+             {
+               post.data.tags.map((tag) => (
+                 <a class="tag" href={tagHref(locale, tag)} data-pagefind-filter="tag">
+                   {tag}
+                 </a>
+               ))
+             }
+           </div>
          </div>
-       </div>
-
-       {
-         toc.length > 0 && (
-           <nav class="toc" aria-label={t("post.toc")}>
-             <p class="toc-title">{t("post.toc")}</p>
-             <ul>
-               {toc.map((h) => (
-                 <li class={`lvl-${h.depth}`}>
-                   <a href={`#${h.slug}`}>{h.text}</a>
-                 </li>
-               ))}
-             </ul>
-           </nav>
-         )
-       }
-
-       <hr />
-       <div class="prose" data-pagefind-body data-pagefind-highlight>
-         <Content />
-       </div>
-
-       <nav class="pager">
-         {
-           older && (
-             <a class="pager-link" href={`${blogHref(locale)}${slugOf(older)}/`}>
-               <span>{t("post.prev")}</span>
-               <strong>{older.data.title}</strong>
-             </a>
-           )
-         }
-         {
-           newer && (
-             <a
-               class="pager-link next"
-               href={`${blogHref(locale)}${slugOf(newer)}/`}
-             >
-               <span>{t("post.next")}</span>
-               <strong>{newer.data.title}</strong>
-             </a>
-           )
-         }
-       </nav>
-
-       <Giscus />
-
-       {
-         related.length > 0 && (
-           <section class="related">
-             <h2>{t("post.related")}</h2>
-             <div class="list">
-               {related.map((p, i) => (
-                 <PostCard post={p} locale={locale} base={blogHref(locale)} index={i} />
-               ))}
-             </div>
-           </section>
-         )
-       }
-    </div>
-  </main>
-  <Footer />
+         <div class="widget">
+           <h3 class="widget-title">{t("sidebar.latest")}</h3>
+           <LatestList locale={locale} count={5} exclude={post.id} />
+         </div>
+       </aside>
+     </div>
+   </main>
+   <Footer />
 </Layout>
 
 <style>
-  .container.narrow {
-    max-width: 720px;
+  .post-layout {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 720px) 240px;
+    gap: 40px;
+    justify-content: center;
+    align-items: start;
+    max-width: 1240px;
+  }
+  .post-main {
+    min-width: 0;
+  }
+  .rail {
+    position: sticky;
+    top: 84px;
+    display: grid;
+    gap: 24px;
+    align-content: start;
+  }
+  .info {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+  .info-title {
+    font-size: 0.95rem;
+    margin-bottom: 14px;
+  }
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.85rem;
+    padding: 6px 0;
+    border-top: 1px solid var(--border);
+  }
+  .info-row:first-of-type {
+    border-top: none;
+  }
+  .info-row span:first-child {
+    color: var(--text-dim);
+  }
+  .widget {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+  .widget-title {
+    font-size: 1rem;
+    margin-bottom: 14px;
   }
   .cover {
     width: 100%;
@@ -152,13 +235,6 @@ const fmt = post.data.pubDate.toLocaleDateString(
   }
   .back:hover {
     color: var(--text);
-  }
-  .meta {
-    display: flex;
-    gap: 8px;
-    color: var(--text-dim);
-    font-size: 0.85rem;
-    margin-bottom: 10px;
   }
   h1 {
     font-size: clamp(2rem, 5vw, 2.8rem);
@@ -208,8 +284,8 @@ const fmt = post.data.pubDate.toLocaleDateString(
     }
   }
   .toc {
-    margin: 24px 0;
-    padding: 16px 20px;
+    margin: 0;
+    padding: 20px 22px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--surface);
@@ -439,6 +515,21 @@ const fmt = post.data.pubDate.toLocaleDateString(
     }
     .pager-link.next {
       text-align: left;
+    }
+  }
+  @media (max-width: 1120px) {
+    .post-layout {
+      grid-template-columns: minmax(0, 760px);
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .rail {
+      position: static;
+    }
+  }
+  @media (max-width: 720px) {
+    .rail.left {
+      display: none;
     }
   }
 </style>

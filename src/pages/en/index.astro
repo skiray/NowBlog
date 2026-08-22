@@ -4,25 +4,42 @@ import Navbar from "../../components/Navbar.astro";
 import Hero from "../../components/Hero.astro";
 import LatestPosts from "../../components/LatestPosts.astro";
 import TagCloud from "../../components/TagCloud.astro";
+import AuthorCard from "../../components/AuthorCard.astro";
 import About from "../../components/About.astro";
 import Footer from "../../components/Footer.astro";
 import { useTranslations } from "../../i18n/ui";
 
-const t = useTranslations(Astro.currentLocale ?? "zh");
+const locale = (Astro.currentLocale ?? "zh") as "zh" | "en";
+const t = useTranslations(locale);
+const archiveHref = locale === "en" ? "/en/blog/archive/" : "/blog/archive/";
+const tagsHref = locale === "en" ? "/en/tags/" : "/tags/";
+const rssHref = locale === "en" ? "/en/rss.xml" : "/rss.xml";
 ---
 
 <Layout>
   <Navbar />
   <main>
     <Hero />
-    <LatestPosts />
-    <section class="section" id="topics">
-      <div class="container">
-        <div class="head reveal">
-          <span class="eyebrow">{t("topics.eyebrow")}</span>
-          <h2>{t("topics.title")}</h2>
+    <section class="section">
+      <div class="container home">
+        <div class="home-main">
+          <LatestPosts />
         </div>
-        <TagCloud />
+        <aside class="home-aside">
+          <div class="widget">
+            <h2 class="widget-title">{t("sidebar.topics")}</h2>
+            <TagCloud />
+          </div>
+          <div class="widget">
+            <h2 class="widget-title">{t("sidebar.explore")}</h2>
+            <ul class="links">
+              <li><a href={archiveHref}>{t("blog.archive")} →</a></li>
+              <li><a href={tagsHref}>{t("nav.tags")} →</a></li>
+              <li><a href={rssHref}>RSS →</a></li>
+            </ul>
+          </div>
+          <AuthorCard />
+        </aside>
       </div>
     </section>
     <About />
@@ -31,12 +48,63 @@ const t = useTranslations(Astro.currentLocale ?? "zh");
 </Layout>
 
 <style>
-  .head {
-    text-align: center;
-    margin-bottom: 48px;
+  .home {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 48px;
+    align-items: start;
   }
-  .head h2 {
-    font-size: clamp(1.9rem, 4vw, 2.7rem);
-    margin-top: 12px;
+  .home-aside {
+    position: sticky;
+    top: 84px;
+    display: grid;
+    gap: 24px;
+  }
+  .widget {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+  }
+  .widget-title {
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+  }
+  .links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .links a {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 12px;
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .links a:hover {
+    background: var(--ghost-bg);
+    color: var(--accent);
+  }
+  @media (max-width: 900px) {
+    .home {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .home-aside {
+      position: static;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .home-aside :global(.author-card) {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 560px) {
+    .home-aside {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

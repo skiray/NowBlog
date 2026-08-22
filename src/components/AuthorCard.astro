@@ -1,0 +1,67 @@
+---
+import { useTranslations } from "../i18n/ui";
+
+const locale = (Astro.currentLocale ?? "zh") as "zh" | "en";
+const t = useTranslations(locale);
+const initials = locale === "en" ? "N" : "今";
+const email = "mailto:666@qq.com";
+const aboutHref = locale === "en" ? "/en/#about" : "/#about";
+---
+
+<aside class="author-card">
+  <div class="avatar">{initials}</div>
+  <div class="name">{t("brand")}</div>
+  <p class="bio">{t("author.bio")}</p>
+  <div class="actions">
+    <a class="btn btn-ghost" href={email}>{t("about.email")}</a>
+    <a class="link" href={aboutHref}>{t("nav.about")} →</a>
+  </div>
+</aside>
+
+<style>
+  .author-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+  }
+  .avatar {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 12px 30px -12px rgba(109, 139, 255, 0.7);
+  }
+  .name {
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  .bio {
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin: 10px 0 18px;
+  }
+  .actions {
+    display: grid;
+    gap: 10px;
+  }
+  .actions .btn {
+    width: 100%;
+  }
+  .link {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    transition: color 0.2s ease;
+  }
+  .link:hover {
+    color: var(--accent);
+  }
+</style>

@@ -1,0 +1,73 @@
+---
+import { useTranslations } from "../i18n/ui";
+import { getPosts, slugOf } from "../i18n/content";
+
+interface Props {
+  locale: "zh" | "en";
+  count?: number;
+  exclude?: string;
+}
+
+const { locale, count = 5, exclude } = Astro.props;
+const t = useTranslations(locale);
+let posts = await getPosts(locale);
+if (exclude) posts = posts.filter((p) => p.id !== exclude);
+posts = posts.slice(0, count);
+const base = locale === "en" ? "/en/blog/" : "/blog/";
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString(locale === "en" ? "en-US" : "zh-CN", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+---
+
+<ul class="latest-list">
+  {
+    posts.map((p) => (
+      <li>
+        <a href={`${base}${slugOf(p)}/`}>
+          <span class="t">{p.data.title}</span>
+          <time datetime={p.data.pubDate.toISOString()}>
+            {fmt(p.data.pubDate)}
+          </time>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .latest-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .latest-list a {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    transition: background 0.15s ease;
+  }
+  .latest-list a:hover {
+    background: var(--ghost-bg);
+  }
+  .latest-list .t {
+    font-size: 0.9rem;
+    color: var(--text);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .latest-list time {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+</style>

@@ -15,46 +15,42 @@ const fmt = (d: Date) =>
   });
 ---
 
-<section class="section" id="latest">
-  <div class="container">
-    <div class="head reveal">
-      <span class="eyebrow">{t("latest.eyebrow")}</span>
-      <h2>{t("latest.title")}</h2>
-      <p class="sub">{t("latest.sub")}</p>
-    </div>
-    <div class="list">
-      {
-        posts.map((post, i) => (
-          <a class="card reveal" style={`--i:${i}`} href={`${base}${slugOf(post)}/`}>
-            <div class="body">
-              <div class="meta">
-                <time datetime={post.data.pubDate.toISOString()}>
-                  {fmt(post.data.pubDate)}
-                </time>
-              </div>
-              <h3>{post.data.title}</h3>
-              <p>{post.data.description}</p>
-            </div>
-            <div class="tags">
-              {post.data.tags.map((t) => (
-                <span class="tag">{t}</span>
-              ))}
-            </div>
-          </a>
-        ))
-      }
-    </div>
-    <div class="more reveal">
-      <a class="btn btn-ghost" href={base}>{t("latest.all")}</a>
-    </div>
+<div class="latest">
+  <div class="head reveal">
+    <span class="eyebrow">{t("latest.eyebrow")}</span>
+    <h2>{t("latest.title")}</h2>
+    <p class="sub">{t("latest.sub")}</p>
   </div>
-</section>
+  <div class="list">
+    {
+      posts.map((post, i) => (
+        <a class="card reveal" style={`--i:${i}`} href={`${base}${slugOf(post)}/`}>
+          <div class="body">
+            <div class="meta">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {fmt(post.data.pubDate)}
+              </time>
+            </div>
+            <h3>{post.data.title}</h3>
+            <p>{post.data.description}</p>
+          </div>
+          <div class="tags">
+            {post.data.tags.map((t) => (
+              <span class="tag">{t}</span>
+            ))}
+          </div>
+        </a>
+      ))
+    }
+  </div>
+  <div class="more reveal">
+    <a class="btn btn-ghost" href={base}>{t("latest.all")}</a>
+  </div>
+</div>
 
 <style>
   .head {
-    text-align: center;
-    max-width: 560px;
-    margin: 0 auto 56px;
+    margin-bottom: 40px;
   }
   h2 {
     font-size: clamp(1.9rem, 4vw, 2.7rem);
@@ -120,8 +116,7 @@ const fmt = (d: Date) =>
     white-space: nowrap;
   }
   .more {
-    text-align: center;
-    margin-top: 40px;
+    margin-top: 36px;
   }
   @media (max-width: 640px) {
     .card {
