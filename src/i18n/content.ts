@@ -44,6 +44,15 @@ export async function getPostsByAuthor(
   return posts.filter((p) => p.data.author === author);
 }
 
+/** Posts carrying a given tag, newest first. */
+export async function getPostsByTag(
+  locale: Locale,
+  tag: string
+): Promise<Post[]> {
+  const posts = await getPosts(locale);
+  return posts.filter((p) => p.data.tags.includes(tag));
+}
+
 /** Distinct author names present in a locale. */
 export async function getAuthors(locale: Locale): Promise<string[]> {
   const posts = await getPosts(locale);

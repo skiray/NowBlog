@@ -42,6 +42,7 @@ const fmt = (d: Date) =>
     <div class="container narrow">
       <a class="back reveal" href="/en/tags/">{t("tags.back")}</a>
       <h1 class="reveal">#{tag}</h1>
+      <a class="rss reveal" href={`/en/tags/${encodeURIComponent(tag)}/rss.xml`}>RSS</a>
       <div class="list">
         {
           posts.map((post, i) => (
@@ -112,5 +113,17 @@ const fmt = (d: Date) =>
   .post p {
     color: var(--text-dim);
     font-size: 0.92rem;
+  }
+  .rss {
+    display: inline-block;
+    margin-bottom: 24px;
+    font-size: 0.8rem;
+    color: var(--accent);
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+  .rss:hover {
+    border-color: var(--accent);
   }
 </style>

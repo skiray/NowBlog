@@ -36,6 +36,7 @@ const fmt = (d: Date) =>
       <a class="back reveal" href="/en/authors/">{t("authors.back")}</a>
       <h1 class="reveal">{author}</h1>
       <p class="count reveal">{posts.length} {t("authors.count")}</p>
+      <a class="rss reveal" href={`/en/authors/${encodeURIComponent(author)}/rss.xml`}>RSS</a>
       <div class="list">
         {
           posts.map((post, i) => (
@@ -110,5 +111,17 @@ const fmt = (d: Date) =>
   .post p {
     color: var(--text-dim);
     font-size: 0.92rem;
+  }
+  .rss {
+    display: inline-block;
+    margin-bottom: 24px;
+    font-size: 0.8rem;
+    color: var(--accent);
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+  .rss:hover {
+    border-color: var(--accent);
   }
 </style>
