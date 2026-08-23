@@ -10,6 +10,8 @@ const blog = defineCollection({
     tags: z.array(z.string()).default([]),
     author: z.string().default("NowBlog"),
     cover: z.string().optional(),
+    series: z.string().optional(),
+    seriesOrder: z.number().optional(),
     draft: z.boolean().default(false),
   }),
 });

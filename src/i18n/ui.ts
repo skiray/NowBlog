@@ -53,6 +53,7 @@ const ui = {
     "post.related": "相关文章",
     "post.read": "分钟阅读",
     "post.toc": "目录",
+    "post.series": "系列",
     "tags.title": "标签",
     "tags.sub": "点击任意标签查看相关文章。",
     "tags.back": "← 全部标签",
@@ -75,6 +76,9 @@ const ui = {
     "sidebar.explore": "浏览",
     "sidebar.latest": "最新文章",
     "sidebar.tags": "本文标签",
+    "authors.title": "作者",
+    "authors.back": "← 全部作者",
+    "authors.count": "篇文章",
   },
   en: {
     "nav.blog": "Blog",
@@ -121,6 +125,7 @@ const ui = {
     "post.related": "Related",
     "post.read": "min read",
     "post.toc": "Contents",
+    "post.series": "Series",
     "tags.title": "Tags",
     "tags.sub": "Click any tag to see related posts.",
     "tags.back": "← All tags",
@@ -143,6 +148,9 @@ const ui = {
     "sidebar.explore": "Explore",
     "sidebar.latest": "Latest posts",
     "sidebar.tags": "Tags in this post",
+    "authors.title": "Authors",
+    "authors.back": "← All authors",
+    "authors.count": "posts",
   },
 } as const;
 

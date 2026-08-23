@@ -11,10 +11,12 @@ import { useTranslations } from "../i18n/ui";
 import {
   type Post,
   tagHref,
+  authorHref,
   blogHref,
   slugOf,
   getAdjacent,
   getRelated,
+  getSeries,
   readingMinutes,
 } from "../i18n/content";
 
@@ -28,18 +30,39 @@ const { Content, headings } = await render(post);
 const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 const { newer, older } = await getAdjacent(locale, post);
 const related = await getRelated(locale, post);
+const series = await getSeries(locale, post);
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString(),
+  author: { "@type": "Person", name: post.data.author },
+  keywords: post.data.tags.join(", "),
+  inLanguage: locale === "en" ? "en" : "zh-CN",
+  mainEntityOfPage: { "@type": "WebPage", "@id": Astro.url.href },
+  ...(post.data.cover
+    ? {
+        image: new URL(
+          post.data.cover,
+          Astro.site ?? "https://nowblog.pages.dev"
+        ).href,
+      }
+    : null),
+};
 const fmt = post.data.pubDate.toLocaleDateString(
   locale === "en" ? "en-US" : "zh-CN",
   { year: "numeric", month: "long", day: "numeric" }
 );
 ---
 
-<Layout
+    <Layout
   title={`${post.data.title} — ${locale === "en" ? "NowBlog" : "今时录"}`}
   description={post.data.description}
   indexable
 >
-   <Navbar />
+     <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+     <Navbar />
    <div class="progress" aria-hidden="true"></div>
    <button id="to-top" class="to-top" type="button" aria-label="Back to top">
      ↑
@@ -53,10 +76,10 @@ const fmt = post.data.pubDate.toLocaleDateString(
              <span>{t("post.published")}</span>
              <time datetime={post.data.pubDate.toISOString()}>{fmt}</time>
            </div>
-           <div class="info-row">
-             <span>{t("post.author")}</span>
-             <span data-pagefind-meta="author">{post.data.author}</span>
-           </div>
+            <div class="info-row">
+              <span>{t("post.author")}</span>
+              <a href={authorHref(locale, post.data.author)} data-pagefind-meta="author">{post.data.author}</a>
+            </div>
            <div class="info-row">
              <span>{t("post.reading")}</span>
              <span>{readingMinutes(post)} {t("post.read")}</span>
@@ -97,10 +120,25 @@ const fmt = post.data.pubDate.toLocaleDateString(
                ))
              }
            </div>
-         </div>
+          </div>
 
-         <hr />
-         <div class="prose" data-pagefind-body data-pagefind-highlight>
+          {
+            series.length > 0 && (
+              <nav class="series" aria-label={t("post.series")}>
+                <p class="series-title">{t("post.series")}：{post.data.series}</p>
+                <ol>
+                  {series.map((p) => (
+                    <li class={p.id === post.id ? "current" : ""}>
+                      <a href={`${blogHref(locale)}${slugOf(p)}/`}>{p.data.title}</a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            )
+          }
+
+          <hr />
+          <div class="prose" data-pagefind-body data-pagefind-highlight>
            <Content />
          </div>
 
@@ -508,6 +546,44 @@ const fmt = post.data.pubDate.toLocaleDateString(
   .related .list {
     display: grid;
     gap: 20px;
+  }
+  .series {
+    margin-top: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+  }
+  .series-title {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .series ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 6px;
+    counter-reset: s;
+  }
+  .series li {
+    counter-increment: s;
+  }
+  .series li a {
+    color: var(--text-dim);
+    font-size: 0.92rem;
+  }
+  .series li a::before {
+    content: counter(s) ". ";
+    color: var(--accent);
+  }
+  .series li.current a {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .series li a:hover {
+    color: var(--text);
   }
   @media (max-width: 560px) {
     .pager {

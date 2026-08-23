@@ -30,6 +30,43 @@ export function tagHref(locale: Locale, tag: string): string {
   return `${p}/tags/${encodeURIComponent(tag)}/`;
 }
 
+export function authorHref(locale: Locale, author: string): string {
+  const p = locale === "en" ? "/en" : "";
+  return `${p}/authors/${encodeURIComponent(author)}/`;
+}
+
+/** Posts by a given author, newest first. */
+export async function getPostsByAuthor(
+  locale: Locale,
+  author: string
+): Promise<Post[]> {
+  const posts = await getPosts(locale);
+  return posts.filter((p) => p.data.author === author);
+}
+
+/** Distinct author names present in a locale. */
+export async function getAuthors(locale: Locale): Promise<string[]> {
+  const posts = await getPosts(locale);
+  return [...new Set(posts.map((p) => p.data.author))].sort();
+}
+
+/** Posts in the same series as `current`, ordered by seriesOrder then date. */
+export async function getSeries(
+  locale: Locale,
+  current: Post
+): Promise<Post[]> {
+  const series = current.data.series;
+  if (!series) return [];
+  const posts = await getPosts(locale);
+  return posts
+    .filter((p) => p.data.series === series)
+    .sort(
+      (a, b) =>
+        (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0) ||
+        a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+    );
+}
+
 export function blogHref(locale: Locale): string {
   return locale === "en" ? "/en/blog/" : "/blog/";
 }
