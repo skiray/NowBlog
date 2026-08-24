@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: skiray/NowBlog
+  repo: skiray/now-blog
   branch: master
   base_url: https://nowblog.pages.dev
   auth_scope: repo
