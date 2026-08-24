@@ -8,7 +8,7 @@ tags:
   - engineering
   - 系统设计
 author: Skr
-draft: true
+draft: false
 ---
 
 # 酒店 SaaS 报表服务架构设计文档
