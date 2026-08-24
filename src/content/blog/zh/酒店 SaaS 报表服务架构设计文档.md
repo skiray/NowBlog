@@ -1,9 +1,14 @@
 ---
-title: "酒店 SaaS 报表服务架构设计文档"
-description: "记录酒店 SaaS 系统下报表服务的架构设计讨论过程，包含技术选型、数据流转与架构方案。"
+title: 酒店 SaaS 报表服务架构设计文档
+description: 记录酒店 SaaS 系统下报表服务的架构设计讨论过程，包含技术选型、数据流转与架构方案。
 pubDate: 2026-08-24
-tags: ["architecture", "saas", "engineering"]
-author: "Skr"
+tags:
+  - architecture
+  - saas
+  - engineering
+  - 系统设计
+author: Skr
+draft: true
 ---
 
 # 酒店 SaaS 报表服务架构设计文档
