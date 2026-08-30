@@ -1,15 +1,20 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import Navbar from "../../components/Navbar.astro";
-import Footer from "../../components/Footer.astro";
-import PostCard from "../../components/PostCard.astro";
-import { useTranslations } from "../../i18n/ui";
-import { getArchive } from "../../i18n/content";
+import Layout from "../../../layouts/Layout.astro";
+import Navbar from "../../../components/Navbar.astro";
+import Footer from "../../../components/Footer.astro";
+import PostCard from "../../../components/PostCard.astro";
+import { useTranslations } from "../../../i18n/ui";
+import { getArchive } from "../../../i18n/content";
+import { localeFrom, localePaths, prefix } from "../../../i18n/routing";
 
-const locale = "zh" as const;
+export function getStaticPaths() {
+  return localePaths();
+}
+
+const locale = localeFrom(Astro.params);
 const t = useTranslations(locale);
 const groups = await getArchive(locale);
-const base = "/blog/";
+const base = `${prefix(locale)}/blog/`;
 ---
 
 <Layout title={t("blog.archive")} description={t("blog.sub")}>

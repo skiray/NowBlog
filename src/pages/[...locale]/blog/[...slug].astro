@@ -1,0 +1,34 @@
+---
+import PostView from "../../../components/PostView.astro";
+import { getPosts, slugOf, type Post } from "../../../i18n/content";
+import { localeFrom, localePaths } from "../../../i18n/routing";
+import type { Locale } from "../../../i18n/ui";
+
+interface Props {
+  post: Post;
+  locale: Locale;
+}
+
+export async function getStaticPaths() {
+  const paths: {
+    params: Record<string, string | undefined>;
+    props: Props;
+  }[] = [];
+
+  for (const { params } of localePaths()) {
+    const locale = localeFrom(params);
+    for (const post of await getPosts(locale)) {
+      paths.push({
+        params: { ...params, slug: slugOf(post) },
+        props: { post, locale },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { post, locale } = Astro.props;
+---
+
+<PostView post={post} locale={locale} />

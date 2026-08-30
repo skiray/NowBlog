@@ -3,17 +3,29 @@ import Layout from "../../../layouts/Layout.astro";
 import Navbar from "../../../components/Navbar.astro";
 import Footer from "../../../components/Footer.astro";
 import { useTranslations } from "../../../i18n/ui";
-import { getAuthors, getPostsByAuthor, authorHref } from "../../../i18n/content";
+import {
+  getAuthors,
+  getPostsByAuthor,
+  authorHref,
+} from "../../../i18n/content";
+import { localeFrom, localePaths } from "../../../i18n/routing";
 
-const locale = "en" as const;
+export function getStaticPaths() {
+  return localePaths();
+}
+
+const locale = localeFrom(Astro.params);
 const t = useTranslations(locale);
-const authors = await getAuthors("en");
+const authors = await getAuthors(locale);
 const counts = await Promise.all(
-  authors.map(async (a) => ({ a, n: (await getPostsByAuthor("en", a)).length }))
+  authors.map(async (a) => ({ a, n: (await getPostsByAuthor(locale, a)).length }))
 );
 ---
 
-<Layout title={`${t("authors.title")} — NowBlog`} description="List of site authors.">
+<Layout
+  title={`${t("authors.title")} — ${t("brand")}`}
+  description={t("authors.sub")}
+>
   <Navbar />
   <main class="section">
     <div class="container narrow">
@@ -21,7 +33,7 @@ const counts = await Promise.all(
       <div class="list">
         {
           counts.map(({ a, n }, i) => (
-            <a class="post reveal" style={`--i:${i}`} href={authorHref("en", a)}>
+            <a class="post reveal" style={`--i:${i}`} href={authorHref(locale, a)}>
               <h2>{a}</h2>
               <p>{n} {t("authors.count")}</p>
             </a>

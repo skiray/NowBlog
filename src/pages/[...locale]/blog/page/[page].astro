@@ -6,35 +6,49 @@ import PostCard from "../../../../components/PostCard.astro";
 import Pagination from "../../../../components/Pagination.astro";
 import { useTranslations } from "../../../../i18n/ui";
 import { getPosts, type Post, PAGE_SIZE } from "../../../../i18n/content";
-
-const locale = "en" as const;
-const t = useTranslations(locale);
-const base = "/en/blog/";
-const pageBase = "/en/blog/page";
-
-export async function getStaticPaths() {
-  const pageSize = PAGE_SIZE;
-  const all = await getPosts("en");
-  const lastPage = Math.max(1, Math.ceil(all.length / pageSize));
-  return Array.from({ length: lastPage }, (_, i) => {
-    const p = i + 1;
-    return {
-      params: { page: String(p) },
-      props: {
-        posts: all.slice((p - 1) * pageSize, p * pageSize),
-        currentPage: p,
-        lastPage,
-      },
-    };
-  });
-}
+import { localeFrom, localePaths, prefix } from "../../../../i18n/routing";
 
 interface Props {
+  locale: "zh" | "en";
   posts: Post[];
   currentPage: number;
   lastPage: number;
 }
-const { posts, currentPage, lastPage } = Astro.props;
+
+export async function getStaticPaths() {
+  const paths: {
+    params: Record<string, string | undefined>;
+    props: Props;
+  }[] = [];
+
+  for (const { params } of localePaths()) {
+    const locale = localeFrom(params);
+    const all = await getPosts(locale);
+    const lastPage = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+
+    for (let n = 1; n <= lastPage; n++) {
+      paths.push({
+        params: { ...params, page: String(n) },
+        props: {
+          locale,
+          posts: all.slice((n - 1) * PAGE_SIZE, n * PAGE_SIZE),
+          currentPage: n,
+          lastPage,
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { locale, posts, currentPage, lastPage } = Astro.props;
+const t = useTranslations(locale);
+
+const p = prefix(locale);
+const base = `${p}/blog/`;
+const rootHref = `${p}/blog`;
+const pageBase = `${p}/blog/page`;
 ---
 
 <Layout
@@ -60,8 +74,8 @@ const { posts, currentPage, lastPage } = Astro.props;
         <Pagination
           currentPage={currentPage}
           lastPage={lastPage}
-          rootHref="/en/blog"
-          pageBase="/en/blog/page"
+          rootHref={rootHref}
+          pageBase={pageBase}
         />
       </div>
     </section>

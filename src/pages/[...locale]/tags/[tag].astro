@@ -2,45 +2,69 @@
 import Layout from "../../../layouts/Layout.astro";
 import Navbar from "../../../components/Navbar.astro";
 import Footer from "../../../components/Footer.astro";
-import { useTranslations } from "../../../i18n/ui";
-import { getPosts, getPostsByAuthor, slugOf, type Post } from "../../../i18n/content";
-
-const locale = "en" as const;
-const t = useTranslations(locale);
-
-export async function getStaticPaths() {
-  const posts = await getPosts("en");
-  const authors = [...new Set(posts.map((p) => p.data.author))];
-  return Promise.all(
-    authors.map(async (author) => ({
-      params: { name: author },
-      props: { author, posts: await getPostsByAuthor("en", author) },
-    }))
-  );
-}
+import { useTranslations, type Locale } from "../../../i18n/ui";
+import { getPosts, getPostsByTag, slugOf, type Post } from "../../../i18n/content";
+import { localeFrom, localePaths, prefix } from "../../../i18n/routing";
 
 interface Props {
-  author: string;
+  locale: Locale;
+  tag: string;
   posts: Post[];
 }
-const { author, posts } = Astro.props;
-const base = "/en/blog/";
+
+export async function getStaticPaths() {
+  const paths: { params: Record<string, string | undefined>; props: Props }[] =
+    [];
+
+  for (const { params } of localePaths()) {
+    const locale = localeFrom(params);
+    const posts = await getPosts(locale);
+    const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+
+    for (const tag of tags) {
+      paths.push({
+        params: { ...params, tag },
+        props: { locale, tag, posts: await getPostsByTag(locale, tag) },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { locale, tag, posts } = Astro.props;
+const t = useTranslations(locale);
+
+const p = prefix(locale);
+const base = `${p}/blog/`;
 const fmt = (d: Date) =>
-  d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  d.toLocaleDateString(locale === "en" ? "en-US" : "zh-CN", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 ---
 
-<Layout title={`${author} — NowBlog`} description={`Posts by ${author}.`}>
+<Layout
+  title={`#${tag} — ${t("brand")}`}
+  description={t("tag.desc").replace("{tag}", tag)}
+>
   <Navbar />
   <main class="section">
     <div class="container narrow">
-      <a class="back reveal" href="/en/authors/">{t("authors.back")}</a>
-      <h1 class="reveal">{author}</h1>
-      <p class="count reveal">{posts.length} {t("authors.count")}</p>
-      <a class="rss reveal" href={`/en/authors/${encodeURIComponent(author)}/rss.xml`}>RSS</a>
+      <a class="back reveal" href={`${p}/tags/`}>{t("tags.back")}</a>
+      <h1 class="reveal">#{tag}</h1>
+      <a class="rss reveal" href={`${p}/tags/${encodeURIComponent(tag)}/rss.xml`}
+        >RSS</a
+      >
       <div class="list">
         {
           posts.map((post, i) => (
-            <a class="post reveal" style={`--i:${i}`} href={`${base}${slugOf(post)}/`}>
+            <a
+              class="post reveal"
+              style={`--i:${i}`}
+              href={`${base}${slugOf(post)}/`}
+            >
               <div class="meta">
                 <time datetime={post.data.pubDate.toISOString()}>
                   {fmt(post.data.pubDate)}
@@ -72,16 +96,12 @@ const fmt = (d: Date) =>
   }
   h1 {
     font-size: clamp(2rem, 5vw, 3rem);
-    margin-bottom: 8px;
+    margin-bottom: 36px;
     background: linear-gradient(120deg, var(--accent-3), var(--accent));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     width: fit-content;
-  }
-  .count {
-    color: var(--text-dim);
-    margin-bottom: 32px;
   }
   .list {
     display: grid;

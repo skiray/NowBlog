@@ -4,8 +4,14 @@ import Navbar from "../../../components/Navbar.astro";
 import Footer from "../../../components/Footer.astro";
 import TagCloud from "../../../components/TagCloud.astro";
 import { useTranslations } from "../../../i18n/ui";
+import { localeFrom, localePaths } from "../../../i18n/routing";
 
-const t = useTranslations(Astro.currentLocale ?? "zh");
+export function getStaticPaths() {
+  return localePaths();
+}
+
+const locale = localeFrom(Astro.params);
+const t = useTranslations(locale);
 ---
 
 <Layout title={t("tags.title")} description={t("tags.sub")}>
@@ -17,7 +23,7 @@ const t = useTranslations(Astro.currentLocale ?? "zh");
         <h1>{t("tags.title")}</h1>
         <p class="sub">{t("tags.sub")}</p>
       </div>
-      <TagCloud />
+      <TagCloud locale={locale} />
     </div>
   </main>
   <Footer />

@@ -1,46 +1,74 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import Navbar from "../../components/Navbar.astro";
-import Footer from "../../components/Footer.astro";
-import { useTranslations } from "../../i18n/ui";
-import { getPosts, getPostsByAuthor, slugOf, type Post } from "../../i18n/content";
-
-const locale = "zh" as const;
-const t = useTranslations(locale);
-
-export async function getStaticPaths() {
-  const posts = await getPosts("zh");
-  const authors = [...new Set(posts.map((p) => p.data.author))];
-  return Promise.all(
-    authors.map(async (author) => ({
-      params: { name: author },
-      props: { author, posts: await getPostsByAuthor("zh", author) },
-    }))
-  );
-}
+import Layout from "../../../layouts/Layout.astro";
+import Navbar from "../../../components/Navbar.astro";
+import Footer from "../../../components/Footer.astro";
+import { useTranslations, type Locale } from "../../../i18n/ui";
+import {
+  getAuthors,
+  getPostsByAuthor,
+  slugOf,
+  type Post,
+} from "../../../i18n/content";
+import { localeFrom, localePaths, prefix } from "../../../i18n/routing";
 
 interface Props {
+  locale: Locale;
   author: string;
   posts: Post[];
 }
-const { author, posts } = Astro.props;
-const base = "/blog/";
+
+export async function getStaticPaths() {
+  const paths: { params: Record<string, string | undefined>; props: Props }[] =
+    [];
+
+  for (const { params } of localePaths()) {
+    const locale = localeFrom(params);
+    for (const author of await getAuthors(locale)) {
+      paths.push({
+        params: { ...params, name: author },
+        props: { locale, author, posts: await getPostsByAuthor(locale, author) },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { locale, author, posts } = Astro.props;
+const t = useTranslations(locale);
+
+const p = prefix(locale);
+const base = `${p}/blog/`;
 const fmt = (d: Date) =>
-  d.toLocaleDateString("zh-CN", { year: "numeric", month: "short", day: "numeric" });
+  d.toLocaleDateString(locale === "en" ? "en-US" : "zh-CN", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 ---
 
-<Layout title={`${author} — 今时录`} description={`作者 ${author} 的文章。`}>
+<Layout
+  title={`${author} — ${t("brand")}`}
+  description={t("authors.desc").replace("{name}", author)}
+>
   <Navbar />
   <main class="section">
     <div class="container narrow">
-      <a class="back reveal" href="/authors/">{t("authors.back")}</a>
+      <a class="back reveal" href={`${p}/authors/`}>{t("authors.back")}</a>
       <h1 class="reveal">{author}</h1>
       <p class="count reveal">{posts.length} {t("authors.count")}</p>
-      <a class="rss reveal" href={`/authors/${encodeURIComponent(author)}/rss.xml`}>RSS</a>
+      <a
+        class="rss reveal"
+        href={`${p}/authors/${encodeURIComponent(author)}/rss.xml`}>RSS</a
+      >
       <div class="list">
         {
           posts.map((post, i) => (
-            <a class="post reveal" style={`--i:${i}`} href={`${base}${slugOf(post)}/`}>
+            <a
+              class="post reveal"
+              style={`--i:${i}`}
+              href={`${base}${slugOf(post)}/`}
+            >
               <div class="meta">
                 <time datetime={post.data.pubDate.toISOString()}>
                   {fmt(post.data.pubDate)}

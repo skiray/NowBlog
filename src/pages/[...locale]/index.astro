@@ -8,12 +8,18 @@ import AuthorCard from "../../components/AuthorCard.astro";
 import About from "../../components/About.astro";
 import Footer from "../../components/Footer.astro";
 import { useTranslations } from "../../i18n/ui";
+import { localeFrom, localePaths, prefix } from "../../i18n/routing";
 
-const locale = (Astro.currentLocale ?? "zh") as "zh" | "en";
+export function getStaticPaths() {
+  return localePaths();
+}
+
+const locale = localeFrom(Astro.params);
 const t = useTranslations(locale);
-const archiveHref = locale === "en" ? "/en/blog/archive/" : "/blog/archive/";
-const tagsHref = locale === "en" ? "/en/tags/" : "/tags/";
-const rssHref = locale === "en" ? "/en/rss.xml" : "/rss.xml";
+const p = prefix(locale);
+const archiveHref = `${p}/blog/archive/`;
+const tagsHref = `${p}/tags/`;
+const rssHref = `${p}/rss.xml`;
 ---
 
 <Layout>

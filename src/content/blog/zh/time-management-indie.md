@@ -2,7 +2,7 @@
 title: "独立开发者的时间管理"
 description: "没有老板催进度，反而更需要和自己约定节奏。"
 pubDate: 2026-08-08
-tags: ["思考", "product"]
+tags: ["essays", "product"]
 author: "Skr"
 ---
 

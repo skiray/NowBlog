@@ -14,6 +14,7 @@ import {
   authorHref,
   blogHref,
   slugOf,
+  getPosts,
   getAdjacent,
   getRelated,
   getSeries,
@@ -31,6 +32,22 @@ const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 const { newer, older } = await getAdjacent(locale, post);
 const related = await getRelated(locale, post);
 const series = await getSeries(locale, post);
+
+// Language switch targets: link to the translation when it exists (it may still
+// be a draft or untranslated), otherwise fall back to that locale's blog index.
+const otherLocale = locale === "zh" ? ("en" as const) : ("zh" as const);
+const counterpart = (await getPosts(otherLocale)).find(
+  (p) => slugOf(p) === slugOf(post)
+);
+const selfHref = `${blogHref(locale)}${slugOf(post)}/`;
+const otherHref = counterpart
+  ? `${blogHref(otherLocale)}${slugOf(counterpart)}/`
+  : blogHref(otherLocale);
+const langHrefs: Partial<Record<"zh" | "en", string>> = {
+  zh: locale === "zh" ? selfHref : otherHref,
+  en: locale === "en" ? selfHref : otherHref,
+};
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
@@ -62,7 +79,7 @@ const fmt = post.data.pubDate.toLocaleDateString(
   indexable
 >
      <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
-     <Navbar />
+     <Navbar langHrefs={langHrefs} />
    <div class="progress" aria-hidden="true"></div>
    <button id="to-top" class="to-top" type="button" aria-label="Back to top">
      ↑
@@ -138,6 +155,7 @@ const fmt = post.data.pubDate.toLocaleDateString(
           }
 
           <hr />
+          <span hidden data-pagefind-filter={`lang:${locale}`}></span>
           <div class="prose" data-pagefind-body data-pagefind-highlight>
            <Content />
          </div>

@@ -1,5 +1,4 @@
 ---
-import { useTranslations } from "../i18n/ui";
 import { getPosts, slugOf } from "../i18n/content";
 
 interface Props {
@@ -9,7 +8,6 @@ interface Props {
 }
 
 const { locale, count = 5, exclude } = Astro.props;
-const t = useTranslations(locale);
 let posts = await getPosts(locale);
 if (exclude) posts = posts.filter((p) => p.id !== exclude);
 posts = posts.slice(0, count);

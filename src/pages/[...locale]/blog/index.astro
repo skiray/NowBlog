@@ -6,14 +6,22 @@ import PostCard from "../../../components/PostCard.astro";
 import Pagination from "../../../components/Pagination.astro";
 import { useTranslations } from "../../../i18n/ui";
 import { getPosts, PAGE_SIZE } from "../../../i18n/content";
+import { localeFrom, localePaths, prefix } from "../../../i18n/routing";
 
-const locale = "en" as const;
+export function getStaticPaths() {
+  return localePaths();
+}
+
+const locale = localeFrom(Astro.params);
 const t = useTranslations(locale);
 const all = await getPosts(locale);
 const posts = all.slice(0, PAGE_SIZE);
 const lastPage = Math.ceil(all.length / PAGE_SIZE);
-const base = "/en/blog/";
-const pageBase = "/en/blog/page";
+
+const p = prefix(locale);
+const base = `${p}/blog/`;
+const rootHref = `${p}/blog`;
+const pageBase = `${p}/blog/page`;
 ---
 
 <Layout title={t("blog.title")} description={t("blog.sub")}>
@@ -37,8 +45,8 @@ const pageBase = "/en/blog/page";
         <Pagination
           currentPage={1}
           lastPage={lastPage}
-          rootHref="/en/blog"
-          pageBase="/en/blog/page"
+          rootHref={rootHref}
+          pageBase={pageBase}
         />
       </div>
     </section>

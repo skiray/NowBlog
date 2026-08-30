@@ -62,6 +62,8 @@ const ui = {
     "search.fallback":
       "搜索在 production 构建后可用。先运行 `npm run build`，再运行 `npm run preview` 试试看。",
     "search.placeholder": "搜索文章…",
+    "search.count": "共找到 {n} 条结果",
+    "search.empty": "没有匹配的文章，换个关键词试试。",
     "theme.toogle": "切换主题",
     "footer.rights": "保留所有权利。",
     "brand": "今时录",
@@ -79,6 +81,9 @@ const ui = {
     "authors.title": "作者",
     "authors.back": "← 全部作者",
     "authors.count": "篇文章",
+    "authors.sub": "站点作者列表。",
+    "authors.desc": "作者 {name} 的文章。",
+    "tag.desc": "标签 {tag} 下的文章。",
   },
   en: {
     "nav.blog": "Blog",
@@ -134,6 +139,8 @@ const ui = {
     "search.fallback":
       "Search runs after a production build. Run `npm run build` then `npm run preview` to try it.",
     "search.placeholder": "Search posts…",
+    "search.count": "{n} results found",
+    "search.empty": "No matching posts. Try another keyword.",
     "theme.toogle": "Toggle theme",
     "footer.rights": "All rights reserved.",
     "brand": "NowBlog",
@@ -151,6 +158,9 @@ const ui = {
     "authors.title": "Authors",
     "authors.back": "← All authors",
     "authors.count": "posts",
+    "authors.sub": "All authors on this site.",
+    "authors.desc": "Posts by {name}.",
+    "tag.desc": "Posts tagged {tag}.",
   },
 } as const;
 
