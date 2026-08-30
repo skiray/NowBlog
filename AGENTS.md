@@ -7,8 +7,42 @@ Project: 中文「今时录」/ 英文「NowBlog」；标语「记录此刻，�
 ## Build & verification
 
 - `npm run build` runs `astro build && pagefind --site dist`. Pagefind search index is generated **only** at build time.
-- Search, syntax highlighting, archive, lightbox, etc. are **non-functional in `dev`** — verify them via `npm run build && npm run preview`, never `dev`.
-- Search (`/search`, `/en/search`) shows a placeholder in dev.
+- **Only search is broken under `dev`.** Code highlighting (Expressive Code), Mermaid diagrams, the archive (`/blog/archive/`) and the article client JS (lightbox, TOC, back-to-top) all work in `npm run dev`. `/search` shows a placeholder because the index does not exist yet — verify search with `npm run build && npm run preview`.
+- Use `src/content/blog/{zh,en}/rendering-showcase.md` as the smoke test: it covers every element the pipeline supports.
+
+## Rendering pipeline
+
+```mermaid
+flowchart TB
+  subgraph BUILD["构建期 · npm run build"]
+    direction TB
+    MD["Markdown 源文件<br/>src/content/blog/zh · en"]
+    FM["frontmatter 校验<br/>content/config.ts"]
+    RM["remark + GFM<br/>表格 · 任务列表 · 脚注 · 删除线"]
+    MM["rehype-mermaid.mjs<br/>mermaid 围栏 → div.mermaid"]
+    EC["Expressive Code<br/>代码围栏 → figure.frame<br/>文件名 · 行号 · 行高亮 · diff"]
+    ID["rehypeHeadingIds<br/>注入标题 id"]
+    HTML["静态 HTML"]
+    MD --> FM --> RM --> MM --> EC --> ID --> HTML
+  end
+
+  subgraph RUN["运行期 · 浏览器"]
+    direction TB
+    PV["PostView.astro<br/>.prose 容器 · TOC · 标题锚点"]
+    MJS["mermaid 动态 import<br/>~683 kB · 仅含图表的页面"]
+    ECJS["ec.js ~1 kB<br/>复制按钮 · 仅含代码块的页面"]
+    UX["灯箱 · 回到顶部 · 阅读进度条"]
+    PV --> MJS
+    PV --> ECJS
+    PV --> UX
+  end
+
+  PF["Pagefind 索引<br/>仅 data-pagefind-body"]
+  HTML --> PV
+  HTML --> PF
+```
+
+**顺序敏感**：`rehype-mermaid` 必须排在 Expressive Code **之前**，这样 mermaid 围栏被接管时还是个普通的 `<pre>`（详见 [Mermaid diagrams](#mermaid-diagrams)）。
 
 ## Search indexing (Pagefind)
 
