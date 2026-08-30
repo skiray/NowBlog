@@ -32,6 +32,17 @@ All client JS is scoped to `PostView.astro` and degrades gracefully:
 - Code highlighting: Shiki `themes: { light: "github-light", dark: "github-dark" }` (astro.config.mjs); dark palette applied via `html[data-theme="dark"] .astro-code` rule in `global.css`.
 - The `mailto` button lives in `AuthorCard.astro` (not Hero, not About); its address comes from `SITE_EMAIL` in `src/consts.ts`.
 
+## Mermaid diagrams
+
+Author diagrams with a ```mermaid fence. Two pieces make them work:
+
+- **Build time** — `src/plugins/rehype-mermaid.mjs` (registered as `markdown.rehypePlugins` in `astro.config.mjs`) rewrites the block into `<div class="mermaid" data-pagefind-ignore="all">`, so there is no flash of source code. Shiki runs first and records the language as `<pre data-language="mermaid">`; the **`<code>` element carries no `language-*` class**, so the plugin reads it off the `<pre>`.
+- **Run time** — `PostView.astro` dynamically imports `mermaid` only when the page contains `.mermaid`. Posts without diagrams never download it (the library is a ~683 kB / ~169 kB gzip lazy chunk). Theme follows `html[data-theme]` and repaints on `theme-change`.
+
+Diagram source is excluded from the Pagefind index via `data-pagefind-ignore`.
+
+**Gotcha:** Astro caches rendered collection content in `node_modules/.astro`, keyed on file contents. After editing *only* the rehype plugin, existing posts will not re-render — `rm -rf node_modules/.astro` (or bump the markdown config) to force it.
+
 ## Fonts (self-hosted, no CDN)
 
 Imported via Fontsource in `Layout.astro` frontmatter: `@fontsource/noto-serif-sc` (Chinese serif tagline) + `@fontsource/tangerine` (English script). Hero tagline styled in `Hero.astro` `.lead` (gradient text). CJK ships as on-demand slices, so only used glyphs download.

@@ -27,6 +27,7 @@
 - **目录 TOC**：文章内 h2/h3 抽取，滚动高亮当前章节；标题悬停显示可复制锚点
 - **代码复制按钮**、**回到顶部按钮**、**图片灯箱**（点击放大）
 - **代码语法高亮**：Shiki 双主题（github-light / github-dark），随明暗主题切换
+- **Mermaid 图表**：正文里用 ` ```mermaid ` 围栏写流程图/时序图，构建期转成图表容器，客户端按需渲染并跟随明暗主题
 
 ## 技术栈
 
@@ -34,6 +35,7 @@
 - `@astrojs/rss`、`@astrojs/sitemap`
 - Pagefind（静态搜索索引）
 - Giscus（GitHub Discussions 评论）
+- Mermaid（文章内图表，按需懒加载）
 - Fontsource 自托管字体：`Noto Serif SC`（中文衬线）、`Tangerine`（英文手写体）
 
 ## 本地开发

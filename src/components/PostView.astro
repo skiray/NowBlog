@@ -495,6 +495,26 @@ const fmt = post.data.pubDate.toLocaleDateString(
     border: 1px solid var(--border);
     margin-bottom: 16px;
   }
+  /* Diagrams: wide ones scroll instead of overflowing the column. The mono
+     font is only visible before (or if) Mermaid renders. */
+  .prose :global(.mermaid) {
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    margin-bottom: 16px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    white-space: pre;
+  }
+  .prose :global(.mermaid svg) {
+    max-width: 100%;
+    height: auto;
+  }
   .lightbox {
     position: fixed;
     inset: 0;
@@ -704,4 +724,38 @@ const fmt = post.data.pubDate.toLocaleDateString(
         overlay.classList.add("show");
       });
     });
+
+  // Diagrams. `mermaid` is behind a dynamic import, so posts without a
+  // ```mermaid block never download it.
+  const diagrams = Array.from(
+    document.querySelectorAll<HTMLElement>(".prose .mermaid")
+  );
+  if (diagrams.length) {
+    diagrams.forEach((el, i) => {
+      if (!el.id) el.id = `mermaid-${i}`;
+    });
+    const sources = new Map(
+      diagrams.map((el) => [el.id, el.textContent ?? ""])
+    );
+
+    const paint = async () => {
+      const { default: mermaid } = await import("mermaid");
+      const dark = document.documentElement.dataset.theme !== "light";
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: dark ? "dark" : "default",
+        securityLevel: "strict",
+      });
+      // mermaid.run() skips nodes already marked as processed, so restore the
+      // original source before repainting on a theme switch.
+      diagrams.forEach((el) => {
+        el.textContent = sources.get(el.id) ?? "";
+        el.removeAttribute("data-processed");
+      });
+      await mermaid.run({ nodes: diagrams });
+    };
+
+    paint();
+    document.addEventListener("theme-change", () => paint());
+  }
 </script>

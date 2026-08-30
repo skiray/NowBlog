@@ -283,7 +283,7 @@ report_definition（报表定义表）
 ---
 
 ## 四、架构图
-```plain
+```mermaid
 graph TB
     subgraph 业务系统层["🏢 现有酒店 SaaS 业务系统"]
         PMS["PMS 物业管理<br />订单/入住/房态"]
