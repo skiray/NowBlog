@@ -30,7 +30,7 @@ All client JS is scoped to `PostView.astro` and degrades gracefully:
 - TOC from `render(post).headings` (h2/h3) with IntersectionObserver scroll-spy; heading anchor links copy URL.
 - Copy button on `.prose pre`; back-to-top button; image lightbox.
 - Code highlighting: Shiki `themes: { light: "github-light", dark: "github-dark" }` (astro.config.mjs); dark palette applied via `html[data-theme="dark"] .astro-code` rule in `global.css`.
-- About `mailto` button lives in `About.astro` (not Hero).
+- The `mailto` button lives in `AuthorCard.astro` (not Hero, not About); its address comes from `SITE_EMAIL` in `src/consts.ts`.
 
 ## Fonts (self-hosted, no CDN)
 
@@ -38,11 +38,16 @@ Imported via Fontsource in `Layout.astro` frontmatter: `@fontsource/noto-serif-s
 
 ## Pre-deploy (repo-specific gotchas)
 
-- Change `site` in `astro.config.mjs` to the real domain — RSS/sitemap URLs depend on it.
-- Update domain in `public/robots.txt` (still `https://example.com`).
-- Replace identity: `brand` + `about.bio` in `src/i18n/ui.ts`, `SITE_TITLE/SITE_BRAND/SITE_DESCRIPTION` in `src/consts.ts`, `Hero.astro` avatar initials, and post `author` frontmatter.
-- Replace `mailto:666@qq.com` in `About.astro`.
-- Giscus comments off by default. Enable by filling `GISCUS` in `src/components/Giscus.astro` (remove the `your-` prefixes).
+- Change `site` in `astro.config.mjs` **and** the `Sitemap:` line in `public/robots.txt` together (both are currently `https://nowblog.pages.dev`) — RSS/sitemap URLs depend on them.
+- Replace identity: `brand` + `about.bio` in `src/i18n/ui.ts`, `SITE_TITLE/SITE_BRAND/SITE_DESCRIPTION/SITE_EMAIL` in `src/consts.ts`, `Hero.astro` / `AuthorCard.astro` avatar initials, and post `author` frontmatter.
+- Contact email is centralized in `SITE_EMAIL` (`src/consts.ts`); `AuthorCard.astro` renders it as the `mailto:` button.
+- Giscus is **enabled** for `skiray/now-blog`. To change repo/category, edit the `GISCUS` object in `src/components/Giscus.astro`; reverting any value to a `your-` prefix disables it again.
+
+## Legal pages
+
+- `/privacy` + `/terms` (and `/en/privacy`, `/en/terms`) come from `src/pages/[...locale]/{privacy,terms}.astro`, which both render the shared `src/components/LegalPage.astro`.
+- Their copy lives in `src/i18n/ui.ts` (`privacy.*` / `terms.*`); the "last updated" date is `LEGAL_UPDATED` in `src/consts.ts`. Bump it whenever the text changes.
+- Both inherit `Layout`'s default `indexable=false`, so Pagefind skips them, but they do appear in the sitemap.
 
 ## Conventions
 

@@ -1,0 +1,13 @@
+---
+import LegalPage from "../../components/LegalPage.astro";
+import { useTranslations } from "../../i18n/ui";
+import { localeFrom, localePaths } from "../../i18n/routing";
+
+export function getStaticPaths() {
+  return localePaths();
+}
+
+const t = useTranslations(localeFrom(Astro.params));
+---
+
+<LegalPage title={t("privacy.title")} sub={t("privacy.sub")} body={t("privacy.body")} />

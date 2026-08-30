@@ -1,18 +1,24 @@
 ---
-import { useTranslations } from "../i18n/ui";
+import { defaultLocale, useTranslations, type Locale } from "../i18n/ui";
+import { prefix } from "../i18n/routing";
+import { SITE_EMAIL } from "../consts";
+
 const year = new Date().getFullYear();
-const t = useTranslations(Astro.currentLocale ?? "zh");
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const t = useTranslations(locale);
+// Footer links must stay inside the active locale (RSS is per-locale too).
+const base = prefix(locale);
 ---
 
 <footer class="footer">
   <div class="container footer-inner">
-    <a class="brand" href="/"><span class="dot"></span> {t("brand")}</a>
+    <a class="brand" href={`${base}/`}><span class="dot"></span> {t("brand")}</a>
     <p class="copy">© {year} {t("brand")} · {t("footer.rights")}</p>
     <nav class="foot-links">
-      <a href="/rss.xml">RSS</a>
-      <a href="#">Privacy</a>
-      <a href="#">Terms</a>
-      <a href="#">Contact</a>
+      <a href={`${base}/rss.xml`}>RSS</a>
+      <a href={`${base}/privacy/`}>{t("footer.privacy")}</a>
+      <a href={`${base}/terms/`}>{t("footer.terms")}</a>
+      <a href={`mailto:${SITE_EMAIL}`}>{t("footer.contact")}</a>
     </nav>
   </div>
 </footer>
