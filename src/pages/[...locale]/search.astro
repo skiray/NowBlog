@@ -251,7 +251,9 @@ const base = import.meta.env.BASE_URL;
     display: grid;
     gap: 14px;
   }
-  .result {
+  /* Result cards are created in the client script, so they never carry the
+     scope attribute Astro appends — these selectors must be global. */
+  :global(.result) {
     display: block;
     padding: 18px 20px;
     background: var(--surface);
@@ -259,29 +261,29 @@ const base = import.meta.env.BASE_URL;
     border-radius: var(--radius);
     transition: border-color 0.15s ease, transform 0.15s ease;
   }
-  .result:hover {
+  :global(.result:hover) {
     border-color: var(--accent);
     transform: translateY(-2px);
   }
-  .result-title {
+  :global(.result-title) {
     font-size: 1.05rem;
     margin-bottom: 6px;
   }
-  .result:hover .result-title {
+  :global(.result:hover .result-title) {
     color: var(--accent);
   }
-  .result-excerpt {
+  :global(.result-excerpt) {
     color: var(--text-dim);
     font-size: 0.92rem;
     line-height: 1.6;
   }
-  .result-tags {
+  :global(.result-tags) {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     margin-top: 12px;
   }
-  .tag {
+  :global(.tag) {
     font-size: 0.72rem;
     color: var(--accent);
     background: rgba(109, 139, 255, 0.12);
@@ -300,10 +302,10 @@ const base = import.meta.env.BASE_URL;
     border-radius: 6px;
   }
   @media (prefers-reduced-motion: reduce) {
-    .result {
+    :global(.result) {
       transition: none;
     }
-    .result:hover {
+    :global(.result:hover) {
       transform: none;
     }
   }

@@ -7,6 +7,4 @@ author: "Skr"
 draft: true
 ---
 
-# Hotel SaaS Reporting Service — Architecture Design Doc
-
 This document is the English counterpart of the Chinese architecture design write-up. Translation is pending.
