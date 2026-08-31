@@ -1,0 +1,312 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import { useTranslations } from "../../i18n/ui";
+import { localeFrom, localePaths } from "../../i18n/routing";
+
+export function getStaticPaths() {
+  return localePaths();
+}
+
+const locale = localeFrom(Astro.params);
+const t = useTranslations(locale);
+const base = import.meta.env.BASE_URL;
+---
+
+<Layout title={t("search.title")} description={t("search.sub")}>
+  <Navbar />
+  <main class="section">
+    <div class="container narrow">
+      <span class="eyebrow">{t("search.title")}</span>
+      <h1 class="reveal">{t("search.title")}</h1>
+      <p class="sub reveal">{t("search.sub")}</p>
+
+      <div class="search-box reveal">
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="16.5" y1="16.5" x2="21" y2="21"></line>
+        </svg>
+        <input
+          id="search-input"
+          class="search-input"
+          type="search"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder={t("search.placeholder")}
+          aria-label={t("search.placeholder")}
+        />
+      </div>
+
+      <p id="search-status" class="status" hidden></p>
+      <div id="search-results" class="results"></div>
+      <p id="search-fallback" class="fallback" hidden>
+        {t("search.fallback")}
+      </p>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<script
+  define:vars={{
+    locale,
+    base,
+    tCount: t("search.count"),
+    tEmpty: t("search.empty"),
+  }}
+  is:inline
+>
+  const input = document.getElementById("search-input");
+  const resultsEl = document.getElementById("search-results");
+  const statusEl = document.getElementById("search-status");
+  const fallbackEl = document.getElementById("search-fallback");
+
+  let pf = null;
+  let pfFailed = false;
+
+  async function getPagefind() {
+    if (pf || pfFailed) return pf;
+    try {
+      const mod = await import(`${base}pagefind/pagefind.js`);
+      await mod.init();
+      pf = mod;
+    } catch (e) {
+      pfFailed = true;
+    }
+    return pf;
+  }
+
+  function setStatus(text) {
+    if (!text) {
+      statusEl.hidden = true;
+      statusEl.textContent = "";
+      return;
+    }
+    statusEl.hidden = false;
+    statusEl.textContent = text;
+  }
+
+  function render(items) {
+    resultsEl.textContent = "";
+    const frag = document.createDocumentFragment();
+
+    for (const item of items) {
+      const data = item.data;
+      const title = (data.meta && data.meta.title) || data.title || data.url;
+
+      const card = document.createElement("a");
+      card.className = "result";
+      card.href = data.url;
+
+      const h = document.createElement("h2");
+      h.className = "result-title";
+      h.textContent = title;
+
+      const p = document.createElement("p");
+      p.className = "result-excerpt";
+      p.innerHTML = data.excerpt || "";
+
+      card.appendChild(h);
+      card.appendChild(p);
+
+      const rawTags =
+        data.filters && data.filters.tag
+          ? Array.isArray(data.filters.tag)
+            ? data.filters.tag
+            : [data.filters.tag]
+          : [];
+      if (rawTags.length) {
+        const row = document.createElement("div");
+        row.className = "result-tags";
+        for (const tag of rawTags) {
+          const chip = document.createElement("span");
+          chip.className = "tag";
+          chip.textContent = tag;
+          row.appendChild(chip);
+        }
+        card.appendChild(row);
+      }
+
+      frag.appendChild(card);
+    }
+
+    resultsEl.appendChild(frag);
+  }
+
+  let timer = null;
+
+  async function run(raw) {
+    const query = raw.trim();
+    if (!query) {
+      resultsEl.textContent = "";
+      setStatus("");
+      return;
+    }
+
+    const engine = await getPagefind();
+    if (!engine) {
+      resultsEl.textContent = "";
+      setStatus("");
+      fallbackEl.hidden = false;
+      return;
+    }
+    fallbackEl.hidden = true;
+
+    // Scope every query to the current locale.
+    const search = await engine.search(query, { filters: { lang: locale } });
+    const total = search.results.length;
+
+    if (total === 0) {
+      resultsEl.textContent = "";
+      setStatus(tEmpty);
+      return;
+    }
+
+    setStatus(tCount.replace("{n}", String(total)));
+    const page = await Promise.all(
+      search.results.slice(0, 20).map((r) => r.data())
+    );
+    render(page.map((data) => ({ data })));
+  }
+
+  function debounced() {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      const q = input.value;
+      const url = new URL(location.href);
+      if (q.trim()) url.searchParams.set("q", q.trim());
+      else url.searchParams.delete("q");
+      history.replaceState(null, "", url);
+      run(q);
+    }, 220);
+  }
+
+  input?.addEventListener("input", debounced);
+
+  const initial = new URL(location.href).searchParams.get("q");
+  if (initial) {
+    input.value = initial;
+    run(initial);
+  }
+</script>
+
+<style>
+  .container.narrow {
+    max-width: 760px;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 12px 0 8px;
+  }
+  .sub {
+    color: var(--text-dim);
+    margin-bottom: 32px;
+  }
+  .search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .search-icon {
+    position: absolute;
+    left: 18px;
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: var(--text-dim);
+    stroke-width: 2;
+    stroke-linecap: round;
+    pointer-events: none;
+  }
+  .search-input {
+    width: 100%;
+    padding: 16px 18px 16px 48px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .search-input::placeholder {
+    color: var(--text-dim);
+  }
+  .search-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(109, 139, 255, 0.18);
+  }
+  .search-input::-webkit-search-cancel-button {
+    filter: grayscale(1);
+    opacity: 0.6;
+  }
+  .status {
+    margin: 22px 0 14px;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .results {
+    display: grid;
+    gap: 14px;
+  }
+  /* Result cards are created in the client script, so they never carry the
+     scope attribute Astro appends — these selectors must be global. */
+  :global(.result) {
+    display: block;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  :global(.result:hover) {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  :global(.result-title) {
+    font-size: 1.05rem;
+    margin-bottom: 6px;
+  }
+  :global(.result:hover .result-title) {
+    color: var(--accent);
+  }
+  :global(.result-excerpt) {
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+  :global(.result-tags) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  :global(.tag) {
+    font-size: 0.72rem;
+    color: var(--accent);
+    background: rgba(109, 139, 255, 0.12);
+    padding: 2px 9px;
+    border-radius: 999px;
+  }
+  .fallback {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin-top: 18px;
+  }
+  .fallback code {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.result) {
+      transition: none;
+    }
+    :global(.result:hover) {
+      transform: none;
+    }
+  }
+</style>

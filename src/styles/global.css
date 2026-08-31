@@ -183,10 +183,3 @@ h3 {
   }
 }
 
-/* Shiki dual-theme: swap to dark palette when the site theme is dark */
-html[data-theme="dark"] .astro-code,
-html[data-theme="dark"] .astro-code span {
-  color: var(--shiki-dark) !important;
-  background-color: var(--shiki-dark-bg) !important;
-}
-

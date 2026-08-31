@@ -15,7 +15,7 @@ const blog = defineCollection({
       .refine((v) => v === undefined || CATEGORY_IDS.includes(v), {
         message: `category 必须是 src/data/categories.ts 中注册的 id: ${CATEGORY_IDS.join(", ")}`,
       }),
-    author: z.string().default("NowBlog"),
+    author: z.string().default("Skr"),
     cover: z.string().optional(),
     series: z.string().optional(),
     seriesOrder: z.number().optional(),

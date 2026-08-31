@@ -68,8 +68,48 @@ const ui = {
     "search.fallback":
       "搜索在 production 构建后可用。先运行 `npm run build`，再运行 `npm run preview` 试试看。",
     "search.placeholder": "搜索文章…",
+    "search.count": "共找到 {n} 条结果",
+    "search.empty": "没有匹配的文章，换个关键词试试。",
     "theme.toogle": "切换主题",
     "footer.rights": "保留所有权利。",
+    "footer.privacy": "隐私政策",
+    "footer.terms": "服务条款",
+    "footer.contact": "联系",
+    "legal.updated": "最后更新",
+    "legal.back": "← 返回首页",
+    "privacy.title": "隐私政策",
+    "privacy.sub": "本站收集哪些数据，以及不收集哪些数据。",
+    "privacy.body": `<p>本站是一个纯静态个人博客，<strong>不使用任何统计、分析或广告脚本</strong>，也没有第三方追踪 Cookie。下面是访问本站时可能产生的数据。</p>
+<h3>我们不收集的内容</h3>
+<ul>
+<li>没有用户账号，没有注册或登录流程</li>
+<li>没有 Google Analytics、Umami 之类的访问统计</li>
+<li>没有广告或营销追踪像素</li>
+<li>页面字体为自托管，不会向任何 CDN 发起请求</li>
+</ul>
+<h3>本地存储</h3>
+<p>深色 / 浅色主题偏好保存在浏览器的 <code>localStorage</code> 中，仅存在于你自己的设备上，随时可以清除。</p>
+<h3>评论（Giscus）</h3>
+<p>文章评论由 Giscus 提供，评论数据存储为本站在 GitHub 仓库中的 Discussions。只有当你主动登录 GitHub 并发表评论时，GitHub 才会按其隐私声明处理你的账号信息；不评论就不会被记录。</p>
+<h3>服务器日志</h3>
+<p>托管服务商可能会记录访问日志（如 IP 地址、User-Agent），用于安全与故障排查。这部分数据由服务商保留，本站无法访问或控制。</p>
+<h3>联系</h3>
+<p>如果对以上内容有疑问，可以通过页脚的邮箱联系我。</p>`,
+    "terms.title": "服务条款",
+    "terms.sub": "使用本站前请阅读以下约定。",
+    "terms.body": `<p>使用本站即表示你同意以下条款。条款可能随站点调整而更新，恕不逐一通知。</p>
+<h3>内容版权</h3>
+<p>除非文章另有声明，本站原创文字、图片与代码的著作权归作者所有。欢迎在非商业前提下转载，但请注明作者并保留原文链接。</p>
+<h3>免责声明</h3>
+<ul>
+<li>文章内容仅代表作者个人观点，不构成任何专业建议</li>
+<li>示例代码按「原样」提供，不保证在所有环境下可用；因使用造成的任何损失，作者不承担责任</li>
+<li>外部链接所指向的第三方站点，其内容与隐私实践不在本站控制范围内</li>
+</ul>
+<h3>评论规范</h3>
+<p>评论通过 Giscus 托管于 GitHub Discussions，同时受 GitHub 服务条款约束。请勿发布垃圾信息、人身攻击、违法或侵犯他人权益的内容，我保留删除评论与限制参与的权利。</p>
+<h3>条款变更</h3>
+<p>本站保留随时修改本条款的权利，修改后的条款自发布时起生效。</p>`,
     "brand": "今时录",
     "rss.title": "今时录",
     "rss.desc": "记录此刻，留存当下 —— 今时录 的个人博客。",
@@ -85,6 +125,9 @@ const ui = {
     "authors.title": "作者",
     "authors.back": "← 全部作者",
     "authors.count": "篇文章",
+    "authors.sub": "站点作者列表。",
+    "authors.desc": "作者 {name} 的文章。",
+    "tag.desc": "标签 {tag} 下的文章。",
   },
   en: {
     "nav.blog": "Blog",
@@ -146,8 +189,48 @@ const ui = {
     "search.fallback":
       "Search runs after a production build. Run `npm run build` then `npm run preview` to try it.",
     "search.placeholder": "Search posts…",
+    "search.count": "{n} results found",
+    "search.empty": "No matching posts. Try another keyword.",
     "theme.toogle": "Toggle theme",
     "footer.rights": "All rights reserved.",
+    "footer.privacy": "Privacy",
+    "footer.terms": "Terms",
+    "footer.contact": "Contact",
+    "legal.updated": "Last updated",
+    "legal.back": "← Back home",
+    "privacy.title": "Privacy Policy",
+    "privacy.sub": "What this site does and does not collect.",
+    "privacy.body": `<p>This is a purely static personal blog. It <strong>runs no analytics, tracking or advertising scripts</strong>, and sets no third-party tracking cookies. Here is everything that could involve your data.</p>
+<h3>What we do not collect</h3>
+<ul>
+<li>No user accounts — there is nothing to sign up or log in to</li>
+<li>No analytics tooling such as Google Analytics or Umami</li>
+<li>No advertising or marketing pixels</li>
+<li>Fonts are self-hosted, so no requests are made to any CDN</li>
+</ul>
+<h3>Local storage</h3>
+<p>Your dark / light theme preference is kept in the browser's <code>localStorage</code>. It stays on your own device and you can clear it at any time.</p>
+<h3>Comments (Giscus)</h3>
+<p>Comments are powered by Giscus and stored as GitHub Discussions in this site's repository. GitHub only processes your account information if you deliberately sign in and post a comment; simply reading a page records nothing with GitHub.</p>
+<h3>Server logs</h3>
+<p>The hosting provider may keep access logs (such as IP address and User-Agent) for security and troubleshooting. That data is retained by the provider and this site cannot access or control it.</p>
+<h3>Contact</h3>
+<p>If you have questions about any of the above, reach me via the email address in the footer.</p>`,
+    "terms.title": "Terms of Service",
+    "terms.sub": "Please read these terms before using this site.",
+    "terms.body": `<p>By using this site you agree to the terms below. They may be updated as the site evolves, without individual notice.</p>
+<h3>Content copyright</h3>
+<p>Unless a post states otherwise, the copyright of original text, images and code on this site belongs to the author. Non-commercial sharing is welcome, provided you credit the author and keep a link to the original.</p>
+<h3>Disclaimer</h3>
+<ul>
+<li>Posts reflect only the author's personal views and are not professional advice</li>
+<li>Sample code is provided "as is" with no guarantee it works in every environment; the author accepts no liability for any loss arising from its use</li>
+<li>Third-party sites reached through outbound links are outside this site's control, both in content and in privacy practices</li>
+</ul>
+<h3>Comment guidelines</h3>
+<p>Comments are hosted on GitHub Discussions via Giscus and are additionally subject to GitHub's terms. Do not post spam, personal attacks, unlawful material, or content that infringes others' rights. I reserve the right to delete comments and restrict participation.</p>
+<h3>Changes to these terms</h3>
+<p>This site may revise these terms at any time; revisions take effect as soon as they are published.</p>`,
     "brand": "NowBlog",
     "rss.title": "NowBlog",
     "rss.desc": "Recording this moment, keeping the present — the personal blog of NowBlog.",
@@ -163,6 +246,9 @@ const ui = {
     "authors.title": "Authors",
     "authors.back": "← All authors",
     "authors.count": "posts",
+    "authors.sub": "All authors on this site.",
+    "authors.desc": "Posts by {name}.",
+    "tag.desc": "Posts tagged {tag}.",
   },
 } as const;
 

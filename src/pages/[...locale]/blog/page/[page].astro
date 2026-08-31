@@ -1,0 +1,102 @@
+---
+import Layout from "../../../../layouts/Layout.astro";
+import Navbar from "../../../../components/Navbar.astro";
+import Footer from "../../../../components/Footer.astro";
+import PostCard from "../../../../components/PostCard.astro";
+import Pagination from "../../../../components/Pagination.astro";
+import { useTranslations } from "../../../../i18n/ui";
+import { getPosts, type Post, PAGE_SIZE } from "../../../../i18n/content";
+import { localeFrom, localePaths, prefix } from "../../../../i18n/routing";
+
+interface Props {
+  locale: "zh" | "en";
+  posts: Post[];
+  currentPage: number;
+  lastPage: number;
+}
+
+export async function getStaticPaths() {
+  const paths: {
+    params: Record<string, string | undefined>;
+    props: Props;
+  }[] = [];
+
+  for (const { params } of localePaths()) {
+    const locale = localeFrom(params);
+    const all = await getPosts(locale);
+    const lastPage = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+
+    for (let n = 1; n <= lastPage; n++) {
+      paths.push({
+        params: { ...params, page: String(n) },
+        props: {
+          locale,
+          posts: all.slice((n - 1) * PAGE_SIZE, n * PAGE_SIZE),
+          currentPage: n,
+          lastPage,
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { locale, posts, currentPage, lastPage } = Astro.props;
+const t = useTranslations(locale);
+
+const p = prefix(locale);
+const base = `${p}/blog/`;
+const rootHref = `${p}/blog`;
+const pageBase = `${p}/blog/page`;
+---
+
+<Layout
+  title={`${t("blog.title")} · ${currentPage}`}
+  description={t("blog.sub")}
+>
+  <Navbar />
+  <main>
+    <section class="section">
+      <div class="container narrow">
+        <span class="eyebrow">{t("blog.title")}</span>
+        <h1 class="reveal">{t("blog.title")}</h1>
+        <p class="sub reveal">{t("blog.sub")}</p>
+
+        <div class="list">
+          {
+            posts.map((post, i) => (
+              <PostCard post={post} locale={locale} base={base} index={i} />
+            ))
+          }
+        </div>
+
+        <Pagination
+          currentPage={currentPage}
+          lastPage={lastPage}
+          rootHref={rootHref}
+          pageBase={pageBase}
+        />
+      </div>
+    </section>
+    <Footer />
+  </main>
+</Layout>
+
+<style>
+  .container.narrow {
+    max-width: 760px;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 12px 0 8px;
+  }
+  .sub {
+    color: var(--text-dim);
+    margin-bottom: 40px;
+  }
+  .list {
+    display: grid;
+    gap: 20px;
+  }
+</style>

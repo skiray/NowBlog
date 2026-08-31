@@ -28,7 +28,7 @@ collections:
         label: "标签"
         widget: list
         field: { name: tag, label: "标签", widget: string }
-      - { name: author, label: "作者", widget: string, default: "Skiray" }
+      - { name: author, label: "作者", widget: string, default: "Skr" }
       - { name: cover, label: "封面图", widget: image, required: false }
       - { name: series, label: "系列", widget: string, required: false }
       - { name: seriesOrder, label: "系列序号", widget: number, required: false }
@@ -51,7 +51,7 @@ collections:
         label: "Tags"
         widget: list
         field: { name: tag, label: "Tag", widget: string }
-      - { name: author, label: "Author", widget: string, default: "Skiray" }
+      - { name: author, label: "Author", widget: string, default: "Skr" }
       - { name: cover, label: "Cover", widget: image, required: false }
       - { name: series, label: "Series", widget: string, required: false }
       - { name: seriesOrder, label: "Series order", widget: number, required: false }

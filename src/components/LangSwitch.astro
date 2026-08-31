@@ -1,28 +1,45 @@
 ---
-import { languages } from "../i18n/ui";
+import { languages, defaultLocale, type Locale } from "../i18n/ui";
 
-const current = Astro.currentLocale ?? "zh";
+interface Props {
+  /**
+   * Explicit per-locale URLs, used by article pages so a translation that does
+   * not exist (draft / untranslated) falls back to that locale's blog index
+   * instead of a 404.
+   */
+  hrefs?: Partial<Record<Locale, string>>;
+}
+
+const { hrefs } = Astro.props;
+const current = (Astro.currentLocale ?? defaultLocale) as Locale;
 const path = Astro.url.pathname;
 
-function switchTo(target: string): string {
+function switchTo(target: Locale): string {
   const hasEn = path.startsWith("/en");
   if (target === "en") return hasEn ? path : "/en" + path;
   return hasEn ? path.slice(3) || "/" : path;
+}
+
+function hrefFor(target: Locale): string {
+  return hrefs?.[target] ?? switchTo(target);
 }
 ---
 
 <div class="lang">
   {
-    Object.entries(languages).map(([l, label]) => (
-      <a
-        href={switchTo(l)}
-        hreflang={l}
-        class={l === current ? "active" : ""}
-        aria-current={l === current ? "true" : undefined}
-      >
-        {label}
-      </a>
-    ))
+    Object.entries(languages).map(([l, label]) => {
+      const target = l as Locale;
+      return (
+        <a
+          href={hrefFor(target)}
+          hreflang={target}
+          class={target === current ? "active" : ""}
+          aria-current={target === current ? "true" : undefined}
+        >
+          {label}
+        </a>
+      );
+    })
   }
 </div>
 

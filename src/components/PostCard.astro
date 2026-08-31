@@ -1,7 +1,6 @@
 ---
 import { slugOf, type Post } from "../i18n/content";
 import { categoryLabel } from "../data/categories";
-import { useTranslations } from "../i18n/ui";
 
 interface Props {
   post: Post;
@@ -10,7 +9,6 @@ interface Props {
   index?: number;
 }
 const { post, locale, base, index = 0 } = Astro.props;
-const t = useTranslations(locale);
 const fmt = post.data.pubDate.toLocaleDateString(
   locale === "en" ? "en-US" : "zh-CN",
   { year: "numeric", month: "short", day: "numeric" }

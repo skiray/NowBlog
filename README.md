@@ -27,6 +27,7 @@
 - **目录 TOC**：文章内 h2/h3 抽取，滚动高亮当前章节；标题悬停显示可复制锚点
 - **代码复制按钮**、**回到顶部按钮**、**图片灯箱**（点击放大）
 - **代码语法高亮**：Shiki 双主题（github-light / github-dark），随明暗主题切换
+- **Mermaid 图表**：正文里用 ` ```mermaid ` 围栏写流程图/时序图，构建期转成图表容器，客户端按需渲染并跟随明暗主题
 
 ## 技术栈
 
@@ -34,6 +35,7 @@
 - `@astrojs/rss`、`@astrojs/sitemap`
 - Pagefind（静态搜索索引）
 - Giscus（GitHub Discussions 评论）
+- Mermaid（文章内图表，按需懒加载）
 - Fontsource 自托管字体：`Noto Serif SC`（中文衬线）、`Tangerine`（英文手写体）
 
 ## 本地开发
@@ -54,27 +56,27 @@ npm run preview  # 预览生产构建（含可用搜索、语法高亮等）
 
 > 搜索、语法高亮、归档、灯箱等请在 `npm run build && npm run preview` 下验证，dev 下不可用。
 
-## 上线前必改
+## 换站点身份时必改
 
-1. **域名**：把 `astro.config.mjs` 里的 `site` 改为你的真实域名（RSS、Sitemap 链接依赖它）。
-2. **robots.txt**：把 `public/robots.txt` 中的 `https://example.com` 改为同一域名。
-3. **个人信息**：
-   - `Hero.astro`（头像字母、品牌名来自 `ui.ts` 的 `brand`）
+1. **域名**：把 `astro.config.mjs` 里的 `site` 与 `public/robots.txt` 的 `Sitemap:` 行**一起**改成同一个真实域名（RSS、Sitemap 链接依赖它）。当前两者均为 `https://nowblog.pages.dev`。
+2. **个人信息**：
+   - `Hero.astro` / `AuthorCard.astro`（头像字母；品牌名来自 `ui.ts` 的 `brand`）
    - 关于区块：`src/i18n/ui.ts` 的 `about.bio`（长文本，含品牌介绍）
-   - `src/consts.ts` 的 `SITE_TITLE / SITE_BRAND / SITE_DESCRIPTION`
+   - `src/consts.ts` 的 `SITE_TITLE / SITE_BRAND / SITE_DESCRIPTION / SITE_EMAIL`
    - 文章 frontmatter 的 `author` 建议一并替换
-4. **联系邮箱**：`About.astro` 中的 `mailto:666@qq.com` 改为你的邮箱。
+3. **联系邮箱**：改 `src/consts.ts` 的 `SITE_EMAIL` 即可，`AuthorCard.astro` 的邮箱按钮与页脚 Contact 链接会跟着变。
+4. **法务页**：`/privacy`、`/terms`（英站在 `/en/` 下）的正文在 `src/i18n/ui.ts` 的 `privacy.*` / `terms.*`，「最后更新」日期在 `src/consts.ts` 的 `LEGAL_UPDATED`。若更换了评论服务、托管商或加了统计脚本，请同步修改隐私政策正文。
 
-## 启用评论（Giscus）
+## 评论（Giscus）
 
-文章页已集成 Giscus，默认显示占位提示。启用步骤：
+文章页已集成 Giscus，并**已为 `skiray/now-blog` 配置好**，开箱即用。如需换成自己的仓库：
 
 1. 在 GitHub 仓库开启 **Settings → Discussions**
 2. 安装 [giscus app](https://github.com/apps/giscus)
 3. 访问 [giscus.app](https://giscus.app) 生成参数
-4. 把生成的 `repo` / `repoId` / `categoryId` 填入 `src/components/Giscus.astro` 顶部的 `GISCUS` 对象（去掉 `your-` 前缀即自动启用）
+4. 把生成的 `repo` / `repoId` / `categoryId` 填入 `src/components/Giscus.astro` 顶部的 `GISCUS` 对象
 
-主题切换会与 Giscus 评论区同步。
+把任意一项改回 `your-` 前缀，评论区会自动关闭并显示占位提示。主题切换会与 Giscus 评论区同步。
 
 ## 部署
 

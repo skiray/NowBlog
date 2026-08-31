@@ -1,21 +1,30 @@
 ---
 import LangSwitch from "./LangSwitch.astro";
-import { useTranslations } from "../i18n/ui";
-const t = useTranslations(Astro.currentLocale ?? "zh");
-const base = Astro.currentLocale === "en" ? "/en" : "";
-const links = [
-  { href: "/blog/", key: "nav.blog" },
-  { href: "/tags/", key: "nav.tags" },
+import { defaultLocale, useTranslations, type Locale, type UIKey } from "../i18n/ui";
+
+interface Props {
+  /** Forwarded to LangSwitch; see that component for details. */
+  langHrefs?: Partial<Record<Locale, string>>;
+}
+
+const { langHrefs } = Astro.props;
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const t = useTranslations(locale);
+// Every nav target must stay inside the active locale, including the brand link.
+const base = locale === defaultLocale ? "" : `/${locale}`;
+const links: { href: string; key: UIKey }[] = [
+  { href: `${base}/blog/`, key: "nav.blog" },
+  { href: `${base}/tags/`, key: "nav.tags" },
   { href: `${base}/categories/`, key: "nav.categories" },
-  { href: "/blog/archive/", key: "blog.archive" },
-  { href: "/search/", key: "nav.search" },
+  { href: `${base}/blog/archive/`, key: "blog.archive" },
+  { href: `${base}/search/`, key: "nav.search" },
   { href: `${base}/#about`, key: "nav.about" },
 ];
 ---
 
 <header class="nav">
   <div class="container nav-inner">
-      <a class="brand" href="/">
+      <a class="brand" href={`${base}/`}>
         <span class="dot"></span> {t("brand")}
       </a>
     <nav class="nav-links">
@@ -28,7 +37,7 @@ const links = [
         type="button"
         aria-label={t("theme.toogle")}
       ></button>
-      <LangSwitch />
+      <LangSwitch hrefs={langHrefs} />
     </div>
   </div>
 </header>
@@ -36,6 +45,7 @@ const links = [
 <script>
   const btn = document.getElementById("theme-toggle");
   const setIcon = () => {
+    if (!btn) return;
     btn.textContent =
       document.documentElement.dataset.theme === "light" ? "🌙" : "☀️";
   };

@@ -1,9 +1,16 @@
 ---
 import { getPosts } from "../i18n/content";
+import { defaultLocale, type Locale } from "../i18n/ui";
 
-const locale = (Astro.currentLocale ?? "zh") as "zh" | "en";
-const posts = await getPosts(locale);
-const base = locale === "en" ? "/en/tags/" : "/tags/";
+interface Props {
+  /** Inferred from the URL when omitted. */
+  locale?: Locale;
+}
+
+const { locale } = Astro.props;
+const loc = locale ?? ((Astro.currentLocale ?? defaultLocale) as Locale);
+const posts = await getPosts(loc);
+const base = loc === "en" ? "/en/tags/" : "/tags/";
 const counts: Record<string, number> = {};
 posts.forEach((p) =>
   p.data.tags.forEach((t) => {

@@ -1,10 +1,11 @@
 ---
 import { useTranslations } from "../i18n/ui";
+import { SITE_EMAIL } from "../consts";
 
 const locale = (Astro.currentLocale ?? "zh") as "zh" | "en";
 const t = useTranslations(locale);
 const initials = locale === "en" ? "N" : "今";
-const email = "mailto:666@qq.com";
+const email = `mailto:${SITE_EMAIL}`;
 const aboutHref = locale === "en" ? "/en/#about" : "/#about";
 ---
 
