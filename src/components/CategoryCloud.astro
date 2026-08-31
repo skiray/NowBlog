@@ -1,0 +1,54 @@
+---
+import { getPosts } from "../i18n/content";
+
+const locale = (Astro.currentLocale ?? "zh") as "zh" | "en";
+const posts = await getPosts(locale);
+const base = locale === "en" ? "/en/categories/" : "/categories/";
+const counts: Record<string, number> = {};
+posts.forEach((p) => {
+  const c = p.data.category;
+  if (c) counts[c] = (counts[c] ?? 0) + 1;
+});
+const cats = Object.entries(counts)
+  .sort((a, b) => b[1] - a[1])
+  .map(([c, n]) => ({ c, n }));
+---
+
+<div class="cloud reveal">
+  {
+    cats.map(({ c, n }) => (
+      <a class="cat" href={`${base}${encodeURIComponent(c)}/`}>
+        {c}
+        <sup>{n}</sup>
+      </a>
+    ))
+  }
+</div>
+
+<style>
+  .cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .cat {
+    font-size: 0.92rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 999px;
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  .cat:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .cat sup {
+    color: var(--text-dim);
+    font-size: 0.7em;
+    margin-left: 4px;
+  }
+</style>

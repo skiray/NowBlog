@@ -4,6 +4,7 @@ description: "From zero, use Astro's content collections and static generation t
 pubDate: 2026-01-12
 tags: ["astro", "engineering"]
 author: "Skr"
+category: "Tech Notes"
 ---
 
 Picking a framework for a personal blog, I went back and forth and finally settled on **Astro** — for one simple reason: it ships zero JavaScript to the browser by default.

@@ -35,6 +35,11 @@ export function authorHref(locale: Locale, author: string): string {
   return `${p}/authors/${encodeURIComponent(author)}/`;
 }
 
+export function categoryHref(locale: Locale, category: string): string {
+  const p = locale === "en" ? "/en" : "";
+  return `${p}/categories/${encodeURIComponent(category)}/`;
+}
+
 /** Posts by a given author, newest first. */
 export async function getPostsByAuthor(
   locale: Locale,
@@ -53,10 +58,25 @@ export async function getPostsByTag(
   return posts.filter((p) => p.data.tags.includes(tag));
 }
 
+/** Posts in a given category, newest first. */
+export async function getPostsByCategory(
+  locale: Locale,
+  category: string
+): Promise<Post[]> {
+  const posts = await getPosts(locale);
+  return posts.filter((p) => p.data.category === category);
+}
+
 /** Distinct author names present in a locale. */
 export async function getAuthors(locale: Locale): Promise<string[]> {
   const posts = await getPosts(locale);
   return [...new Set(posts.map((p) => p.data.author))].sort();
+}
+
+/** Distinct categories present in a locale. */
+export async function getCategories(locale: Locale): Promise<string[]> {
+  const posts = await getPosts(locale);
+  return [...new Set(posts.map((p) => p.data.category).filter(Boolean))].sort();
 }
 
 /** Posts in the same series as `current`, ordered by seriesOrder then date. */

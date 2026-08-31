@@ -31,6 +31,7 @@ const fmt = post.data.pubDate.toLocaleDateString(
     <h2>{post.data.title}</h2>
     <p>{post.data.description}</p>
     <div class="tags">
+      {post.data.category && <span class="tag cat">{post.data.category}</span>}
       {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
     </div>
   </a>

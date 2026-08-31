@@ -4,6 +4,7 @@ description: "默认不发送任何客户端脚本，换来的是肉眼可见的
 pubDate: 2026-02-03
 tags: ["astro", "performance"]
 author: "Skr"
+category: "技术笔记"
 ---
 
 现在大多数框架的默认做法，是先把一整套运行时塞进浏览器，再想办法让它别太慢。Astro 反过来：默认**零 JS**，需要的时候再局部加。

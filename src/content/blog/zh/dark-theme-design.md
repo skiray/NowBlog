@@ -4,6 +4,7 @@ description: "深色模式不只是把背景调黑，聊聊对比度、层级与
 pubDate: 2026-06-14
 tags: ["design", "product"]
 author: "Skr"
+category: "技术笔记"
 ---
 
 很多人做暗色主题，就是背景 `#000`、文字 `#fff`，然后眼睛开始抗议。

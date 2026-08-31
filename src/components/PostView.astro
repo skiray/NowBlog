@@ -12,6 +12,7 @@ import {
   type Post,
   tagHref,
   authorHref,
+  categoryHref,
   blogHref,
   slugOf,
   getAdjacent,
@@ -79,7 +80,15 @@ const fmt = post.data.pubDate.toLocaleDateString(
             <div class="info-row">
               <span>{t("post.author")}</span>
               <a href={authorHref(locale, post.data.author)} data-pagefind-meta="author">{post.data.author}</a>
-            </div>
+          </div>
+          {
+            post.data.category && (
+              <div class="info-row">
+                <span>{t("post.category")}</span>
+                <a href={categoryHref(locale, post.data.category)} data-pagefind-filter="category">{post.data.category}</a>
+              </div>
+            )
+          }
            <div class="info-row">
              <span>{t("post.reading")}</span>
              <span>{readingMinutes(post)} {t("post.read")}</span>
@@ -111,9 +120,16 @@ const fmt = post.data.pubDate.toLocaleDateString(
            <a class="back" href={blogHref(locale)}>{t("blog.back")}</a>
            <h1 data-pagefind-meta="title">{post.data.title}</h1>
            <p class="lead" data-pagefind-meta="description">{post.data.description}</p>
-           <div class="tags">
-             {
-               post.data.tags.map((tag) => (
+          <div class="tags">
+            {
+              post.data.category && (
+                <a class="tag cat" href={categoryHref(locale, post.data.category)} data-pagefind-filter="category">
+                  {post.data.category}
+                </a>
+              )
+            }
+            {
+              post.data.tags.map((tag) => (
                  <a class="tag" href={tagHref(locale, tag)} data-pagefind-filter="tag">
                    {tag}
                  </a>

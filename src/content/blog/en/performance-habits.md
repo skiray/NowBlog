@@ -4,6 +4,7 @@ description: "Small, repeatable habits that are easy to do and easy to forget â€
 pubDate: 2026-03-18
 tags: ["performance", "engineering"]
 author: "Skr"
+category: "Tech Notes"
 ---
 
 Performance isn't a one-time cleanup before launch; it's a daily habit. Here are the ones I repeat most:

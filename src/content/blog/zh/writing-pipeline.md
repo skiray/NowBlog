@@ -4,6 +4,7 @@ description: "从灵感捕获到发布，我是如何把写作流程自动化的
 pubDate: 2026-04-09
 tags: ["product", "engineering"]
 author: "Skr"
+category: "随想"
 ---
 
 写作最难的从来不是写，而是**开始写**和**别丢稿**。我的链路很朴素：

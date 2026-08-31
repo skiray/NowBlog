@@ -4,6 +4,7 @@ description: "第一个稳定版本背后，那些纠结、取舍与终于松一
 pubDate: 2026-05-21
 tags: ["release", "product"]
 author: "Skr"
+category: "项目实录"
 ---
 
 如果说做 demo 是热恋，发 v1.0 就是决定结婚——你要为它长期的样子负责。

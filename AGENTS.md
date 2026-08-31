@@ -12,15 +12,16 @@ Project: 中文「今时录」/ 英文「NowBlog」；标语「记录此刻，�
 
 ## Search indexing (Pagefind)
 
-- Only the article body is indexed: `PostView.astro` wraps `<Content />` in `<div class="prose" data-pagefind-body>`. Title/description/author (as `data-pagefind-meta`) and tags (as `data-pagefind-filter`) are indexed from the header region **outside** that div — they work because Pagefind captures meta/filter anywhere on the page.
+- Only the article body is indexed: `PostView.astro` wraps `<Content />` in `<div class="prose" data-pagefind-body>`. Title/description/author (as `data-pagefind-meta`) and tags + category (as `data-pagefind-filter`) are indexed from the header region **outside** that div — they work because Pagefind captures meta/filter anywhere on the page.
 - Results are per-locale: `/search` queries zh index, `/en/search` queries en index.
-- No `data-pagefind-meta`/`data-pagefind-filter` elsewhere; list/archive/tag/home pages are excluded via `pagefind-ignore` (Layout default `indexable=false`).
+- No other `data-pagefind-meta`/`data-pagefind-filter`; list/archive/tag/category/home pages are excluded via `pagefind-ignore` (Layout default `indexable=false`).
 
 ## i18n / content
 
 - Default locale `zh` has **no** URL prefix; English lives under `/en`. Config in `astro.config.mjs` (`prefixDefaultLocale: false`).
-- Blog posts live in `src/content/blog/zh/` and `src/content/blog/en/`. Each post needs **two** files with the **same slug**; mismatched slugs break language switching. Schema in `src/content/config.ts` includes optional `cover` (image path under `public/`) and `draft` (boolean).
+- Blog posts live in `src/content/blog/zh/` and `src/content/blog/en/`. Each post needs **two** files with the **same slug**; mismatched slugs break language switching. Schema in `src/content/config.ts` includes optional `cover` (image path under `public/`), optional `draft` (boolean), and optional `category` (one coarse business grouping per post, e.g. 技术学习 / 项目A / 日记).
 - UI strings (incl. long `about.bio` HTML and `brand`): `src/i18n/ui.ts`. Blog helpers (filter/sort/paginate/archive/related/reading time): `src/i18n/content.ts`. Per-locale RSS: `src/i18n/rss.ts` → `/rss.xml`, `/en/rss.xml`.
+- Classification model: `category` = coarse grouping (one per post; pages at `/categories/`, `/en/categories/`, with per-category RSS), `tags` = fine-grained labels (`/tags/`), `series` + `seriesOrder` = ordered docs inside one project (rendered as an ordered list on the post page, no dedicated landing page). Category values are free strings and may differ per locale; zh/en keys must stay in sync in `ui.ts` (`cats.*`, `nav.categories`, `post.category`).
 - `draft: true` or future `pubDate` → excluded in `build`, kept in `dev` (see `getPosts`).
 
 ## Reading-experience features (article pages only)

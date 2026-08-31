@@ -4,6 +4,7 @@ description: "没有老板催进度，反而更需要和自己约定节奏。"
 pubDate: 2026-08-08
 tags: ["思考", "product"]
 author: "Skr"
+category: "随想"
 ---
 
 自由职业最讽刺的地方在于：没人管你，你却更容易荒废一整天。

@@ -4,6 +4,7 @@ description: "Sending no client-side script by default buys visible speed and a 
 pubDate: 2026-02-03
 tags: ["astro", "performance"]
 author: "Skr"
+category: "Tech Notes"
 ---
 
 Most frameworks dump a whole runtime into the browser first, then try to make it not-too-slow. Astro flips it: **zero JS** by default, and you opt in locally when you need it.
