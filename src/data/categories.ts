@@ -16,9 +16,10 @@ export interface CategoryDef {
  * - Add a new category by appending here; order defines listing order.
  */
 export const CATEGORIES: CategoryDef[] = [
-  { id: "tech-notes", zh: "技术笔记", en: "Tech Notes" },
-  { id: "project-log", zh: "项目实录", en: "Project Log" },
-  { id: "musings", zh: "随想", en: "Musings" },
+  { id: "vibe-coding", zh: "Vibe Coding", en: "Vibe Coding" },
+  { id: "app", zh: "App", en: "App" },
+  { id: "bookkeeping", zh: "记账", en: "Bookkeeping" },
+  { id: "tech-talk", zh: "技术探讨", en: "Tech Discussions" },
 ];
 
 export const CATEGORY_IDS: string[] = CATEGORIES.map((c) => c.id);

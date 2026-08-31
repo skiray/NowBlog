@@ -4,7 +4,6 @@ description: "From capturing an idea to publishing, how I automate the writing f
 pubDate: 2026-04-09
 tags: ["product", "engineering"]
 author: "Skr"
-category: "musings"
 ---
 
 The hardest part of writing was never the writing — it's **starting** and **not losing drafts**. My pipeline is plain:

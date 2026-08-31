@@ -4,7 +4,7 @@ description: "纯静态网站也能有丝滑的全文搜索，而且零后端。
 pubDate: 2026-07-02
 tags: ["astro", "performance", "engineering"]
 author: "Skr"
-category: "tech-notes"
+category: "tech-talk"
 ---
 
 静态站点最大的痛点是搜索：没有服务器，怎么搜？答案可能是 **Pagefind**。

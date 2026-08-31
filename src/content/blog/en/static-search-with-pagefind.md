@@ -4,7 +4,7 @@ description: "Even a fully static site can have smooth full-text search, with ze
 pubDate: 2026-07-02
 tags: ["astro", "performance", "engineering"]
 author: "Skr"
-category: "tech-notes"
+category: "tech-talk"
 ---
 
 The biggest pain of a static site is search: no server, how do you search? The answer might be **Pagefind**.

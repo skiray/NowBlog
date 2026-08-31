@@ -4,7 +4,7 @@ description: "Architecture design discussion for the reporting service in a hote
 pubDate: 2026-08-24
 tags: ["architecture", "saas", "engineering"]
 author: "Skr"
-category: "tech-notes"
+category: "tech-talk"
 draft: true
 ---
 

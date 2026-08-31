@@ -8,7 +8,7 @@ tags:
   - engineering
   - 系统设计
 author: Skr
-category: "tech-notes"
+category: "tech-talk"
 draft: true
 ---
 

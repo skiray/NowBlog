@@ -4,7 +4,6 @@ description: "With no boss chasing deadlines, you need to negotiate a rhythm wit
 pubDate: 2026-08-08
 tags: ["essays", "product"]
 author: "Skr"
-category: "musings"
 ---
 
 The irony of freelancing: nobody manages you, yet it's easier to waste a whole day.

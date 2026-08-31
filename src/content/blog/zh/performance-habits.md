@@ -4,7 +4,7 @@ description: "一些随手就能做、却常被忽略的性能习惯，积少成
 pubDate: 2026-03-18
 tags: ["performance", "engineering"]
 author: "Skr"
-category: "tech-notes"
+category: "tech-talk"
 ---
 
 性能优化不是上线前的一次大扫除，而是日常的小习惯。列几个我最常挂在嘴边的：
