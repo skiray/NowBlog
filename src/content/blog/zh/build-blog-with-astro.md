@@ -4,7 +4,7 @@ description: "从零开始，用 Astro 的内容集合与静态生成，搭建�
 pubDate: 2026-01-12
 tags: ["astro", "engineering"]
 author: "Skr"
-category: "技术笔记"
+category: "tech-notes"
 ---
 
 做个人博客这件事，我纠结过很多框架，最后停在 **Astro**，原因很简单：它默认不发任何 JavaScript 到浏览器。

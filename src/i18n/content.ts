@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import type { Locale } from "./ui";
+import { CATEGORY_IDS } from "../data/categories";
 
 export type Post = CollectionEntry<"blog">;
 
@@ -73,10 +74,13 @@ export async function getAuthors(locale: Locale): Promise<string[]> {
   return [...new Set(posts.map((p) => p.data.author))].sort();
 }
 
-/** Distinct categories present in a locale. */
+/** Categories in use for a locale, ordered by the registry. */
 export async function getCategories(locale: Locale): Promise<string[]> {
   const posts = await getPosts(locale);
-  return [...new Set(posts.map((p) => p.data.category).filter(Boolean))].sort();
+  const used = new Set(
+    posts.map((p) => p.data.category).filter((c): c is string => !!c)
+  );
+  return CATEGORY_IDS.filter((id) => used.has(id));
 }
 
 /** Posts in the same series as `current`, ordered by seriesOrder then date. */

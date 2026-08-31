@@ -4,7 +4,7 @@ description: "Behind the first stable release: the trade-offs, the cuts, and the
 pubDate: 2026-05-21
 tags: ["release", "product"]
 author: "Skr"
-category: "Project Log"
+category: "project-log"
 ---
 
 If a demo is a love affair, shipping v1.0 is deciding to marry — you're now responsible for how it looks long-term.

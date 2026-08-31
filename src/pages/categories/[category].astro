@@ -3,6 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/Navbar.astro";
 import Footer from "../../components/Footer.astro";
 import { useTranslations } from "../../i18n/ui";
+import { categoryLabel } from "../../data/categories";
 import {
   getPosts,
   getPostsByCategory,
@@ -29,6 +30,7 @@ interface Props {
   posts: Post[];
 }
 const { category, posts } = Astro.props;
+const label = categoryLabel(locale, category);
 const base = "/blog/";
 const fmt = (d: Date) =>
   d.toLocaleDateString("zh-CN", {
@@ -38,12 +40,11 @@ const fmt = (d: Date) =>
   });
 ---
 
-<Layout title={`${category} — 今时录`} description={`分类 ${category} 下的文章。`}>
+<Layout title={`${label} — 今时录`} description={`分类 ${label} 下的文章。`}>
   <Navbar />
   <main class="section">
     <div class="container narrow">
-      <a class="back reveal" href="/categories/">{t("cats.back")}</a>
-      <h1 class="reveal">{category}</h1>
+      <h1 class="reveal">{label}</h1>
       <p class="count reveal">{posts.length} {t("cats.count")}</p>
       <a class="rss reveal" href={`/categories/${encodeURIComponent(category)}/rss.xml`}>RSS</a>
       <div class="list">

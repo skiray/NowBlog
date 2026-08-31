@@ -1,6 +1,6 @@
 ---
 import { getPosts } from "../i18n/content";
-
+import { categoryLabel } from "../data/categories";
 const locale = (Astro.currentLocale ?? "zh") as "zh" | "en";
 const posts = await getPosts(locale);
 const base = locale === "en" ? "/en/categories/" : "/categories/";
@@ -18,7 +18,7 @@ const cats = Object.entries(counts)
   {
     cats.map(({ c, n }) => (
       <a class="cat" href={`${base}${encodeURIComponent(c)}/`}>
-        {c}
+        {categoryLabel(locale, c)}
         <sup>{n}</sup>
       </a>
     ))

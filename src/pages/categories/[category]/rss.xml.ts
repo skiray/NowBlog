@@ -2,6 +2,7 @@ import type { APIContext } from "astro";
 import { getCategories, getPostsByCategory } from "../../../i18n/content";
 import { generateListRss } from "../../../i18n/rss";
 import { useTranslations } from "../../../i18n/ui";
+import { categoryLabel } from "../../../data/categories";
 
 export async function getStaticPaths() {
   const categories = await getCategories("zh");
@@ -15,8 +16,8 @@ export async function GET(context: APIContext) {
   return generateListRss(
     context,
     "zh",
-    `${category} — ${t("rss.title")}`,
-    `分类 ${category} 下的文章订阅。`,
+    `${categoryLabel("zh", category)} — ${t("rss.title")}`,
+    `分类 ${categoryLabel("zh", category)} 下的文章订阅。`,
     posts
   );
 }

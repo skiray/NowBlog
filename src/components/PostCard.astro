@@ -1,5 +1,6 @@
 ---
 import { slugOf, type Post } from "../i18n/content";
+import { categoryLabel } from "../data/categories";
 import { useTranslations } from "../i18n/ui";
 
 interface Props {
@@ -31,7 +32,7 @@ const fmt = post.data.pubDate.toLocaleDateString(
     <h2>{post.data.title}</h2>
     <p>{post.data.description}</p>
     <div class="tags">
-      {post.data.category && <span class="tag cat">{post.data.category}</span>}
+      {post.data.category && <span class="tag cat">{categoryLabel(locale, post.data.category)}</span>}
       {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
     </div>
   </a>

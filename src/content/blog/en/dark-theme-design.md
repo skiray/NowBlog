@@ -4,7 +4,7 @@ description: "Dark mode isn't just a black background — contrast, hierarchy, a
 pubDate: 2026-06-14
 tags: ["design", "product"]
 author: "Skr"
-category: "Tech Notes"
+category: "tech-notes"
 ---
 
 A lot of people do dark mode as `#000` background and `#fff` text, then wonder why their eyes protest.

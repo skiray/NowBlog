@@ -8,6 +8,7 @@ import AuthorCard from "../components/AuthorCard.astro";
 import LatestList from "../components/LatestList.astro";
 import { render } from "astro:content";
 import { useTranslations } from "../i18n/ui";
+import { categoryLabel } from "../data/categories";
 import {
   type Post,
   tagHref,
@@ -85,7 +86,7 @@ const fmt = post.data.pubDate.toLocaleDateString(
             post.data.category && (
               <div class="info-row">
                 <span>{t("post.category")}</span>
-                <a href={categoryHref(locale, post.data.category)} data-pagefind-filter="category">{post.data.category}</a>
+                <a href={categoryHref(locale, post.data.category)} data-pagefind-filter="category">{categoryLabel(locale, post.data.category)}</a>
               </div>
             )
           }
@@ -124,7 +125,7 @@ const fmt = post.data.pubDate.toLocaleDateString(
             {
               post.data.category && (
                 <a class="tag cat" href={categoryHref(locale, post.data.category)} data-pagefind-filter="category">
-                  {post.data.category}
+                  {categoryLabel(locale, post.data.category)}
                 </a>
               )
             }
