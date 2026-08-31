@@ -23,7 +23,15 @@ export async function getPosts(locale: Locale): Promise<Post[]> {
     .filter((p) => localeOf(p) === locale)
     .filter((p) => !p.data.draft)
     .filter((p) => isDev || p.data.pubDate.valueOf() <= now)
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    .sort(
+      (a, b) =>
+        b.data.pubDate.valueOf() - a.data.pubDate.valueOf() ||
+        // Same-date posts: keep a series in seriesOrder; otherwise fall back to id.
+        (a.data.series && a.data.series === b.data.series
+          ? (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0)
+          : 0) ||
+        a.id.localeCompare(b.id)
+    );
 }
 
 export function tagHref(locale: Locale, tag: string): string {
@@ -120,8 +128,20 @@ export async function getArchive(locale: Locale): Promise<ArchiveGroup[]> {
     .map(([year, ps]) => ({ year, posts: ps }));
 }
 
-/** Newer / older post relative to `current`, by publish date (desc). */
+/**
+ * Prev / next post relative to `current`. Inside a series this follows
+ * `seriesOrder`; outside a series it follows publish date (newest first).
+ * Returned as { newer, older } where PostView renders newer as 下一篇, older as 上一篇.
+ */
 export async function getAdjacent(locale: Locale, current: Post) {
+  if (current.data.series) {
+    const series = await getSeries(locale, current);
+    const idx = series.findIndex((p) => p.id === current.id);
+    return {
+      newer: idx >= 0 && idx < series.length - 1 ? series[idx + 1] : undefined,
+      older: idx > 0 ? series[idx - 1] : undefined,
+    };
+  }
   const all = await getPosts(locale);
   const idx = all.findIndex((p) => p.id === current.id);
   return {
